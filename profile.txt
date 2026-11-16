@@ -20,6 +20,7 @@ linkedin=https://www.linkedin.com/in/sanket-kolhe-78736815b
 about1=Sanket Kolhe is an MBA International Management candidate at Hochschule Pforzheim, Germany, with four years of professional experience at Hero MotoCorp.
 about2=Previously Deputy Manager in Business Excellence at Hero MotoCorp, leading operational excellence, process improvement, performance management, and cross-functional transformation initiatives.
 about3=Currently working at IONOS in Customer Care Operations, focusing on process optimization, workflow automation, stakeholder collaboration, and AI-enabled business transformation.
+about4=
 
 phone=+555-555-555
 
