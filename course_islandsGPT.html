@@ -1,0 +1,1413 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light">
+<title>Pforzheim AI Course Islands</title>
+<style>
+  :root {
+    --paper: #f8f7f4;
+    --surface: #fffdfa;
+    --ink: #242639;
+    --muted: #616275;
+    --line: #e8e4eb;
+    --violet: #5a4599;
+    --lavender: #efeafb;
+    --radius: 22px;
+    font: 100%/1.5 "Nunito Sans", "Segoe UI", system-ui, sans-serif;
+    color: var(--ink);
+    background: var(--paper);
+  }
+  * { box-sizing: border-box; }
+  [hidden] { display: none !important; }
+  body { margin: 0; min-width: 300px; }
+  button, input, select, textarea { font: inherit; }
+  button, select, input[type=range], input[type=checkbox] { cursor: pointer; }
+  button { color: inherit; }
+  button:disabled { cursor: default; opacity: .53; }
+  :focus-visible { outline: 3px solid #7055ce; outline-offset: 3px; }
+  .shell { width: min(1320px, calc(100% - 96px)); margin-inline: auto; }
+  .topbar { border-bottom: 1px solid var(--line); background: var(--surface); }
+  .topbar-inner { min-height: 71px; display: flex; align-items: center; justify-content: space-between; gap: 18px; padding-block: 10px; }
+  .brand { display: flex; align-items: center; gap: 11px; font-size: .93rem; font-weight: 780; white-space: nowrap; }
+  .brand-icon { width: 35px; height: 35px; display: grid; place-items: center; border-radius: 11px; color: #fff; background: #554487; }
+  .icon { width: 18px; height: 18px; flex: 0 0 auto; fill: none; stroke: currentColor; stroke-width: 1.65; stroke-linecap: round; stroke-linejoin: round; }
+  .top-tools, .audio-group { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+  .audio-group { gap: 7px; }
+  .tool, .map-control, .back, .action { display: inline-flex; align-items: center; justify-content: center; gap: 7px; border: 1px solid var(--line); border-radius: 10px; background: var(--surface); min-height: 39px; padding: 7px 11px; font-size: .87rem; font-weight: 700; }
+  .tool:hover, .back:hover, .action:hover { background: var(--lavender); }
+  .tool[aria-pressed=true], .action[aria-pressed=true] { color: #4c378b; background: #ede7fa; border-color: #c1b3eb; }
+  .volume { width: 62px; accent-color: var(--violet); margin: 0 5px 0 0; }
+  .switch { width: 28px; height: 16px; border-radius: 99px; background: #ded9e8; position: relative; }
+  .switch::after { content: ""; position: absolute; width: 10px; height: 10px; top: 3px; left: 3px; border-radius: 50%; background: #fff; }
+  [aria-pressed=true] .switch { background: var(--violet); }
+  [aria-pressed=true] .switch::after { left: 15px; }
+  .intro { padding: 29px 1px 24px; }
+  .eyebrow { margin: 0; display: flex; align-items: center; gap: 8px; color: var(--violet); font-size: .77rem; font-weight: 800; letter-spacing: .14em; text-transform: uppercase; }
+  .eyebrow .icon { width: 15px; height: 15px; }
+  .title-line { display: flex; gap: 7px 15px; align-items: baseline; flex-wrap: wrap; margin-top: 4px; }
+  h1, h2, h3, p { margin-top: 0; }
+  h1 { margin-bottom: 0; font-size: clamp(1.95rem, 4.1vw, 3.55rem); letter-spacing: -.064em; line-height: 1.1; font-weight: 820; }
+  .byline { color: #6c637c; font-size: clamp(.92rem, 1.3vw, 1.15rem); font-style: italic; white-space: nowrap; }
+  .intro-copy { margin: 9px 0 0; color: var(--muted); font-size: 1rem; }
+  .workspace { display: grid; grid-template-columns: minmax(0, 1fr) minmax(290px, 325px); grid-template-rows: clamp(540px, calc(100svh - 277px), 720px); align-items: stretch; gap: 16px; }
+  .map { isolation: isolate; position: relative; overflow: hidden; border-radius: var(--radius); background: radial-gradient(ellipse at 49% 55%, #969bcf 2%, transparent 55%), radial-gradient(ellipse at 10% 90%, #8979bb, transparent 52%), radial-gradient(ellipse at 93% 4%, #7790c4, transparent 55%), linear-gradient(137deg, #282e54 0%, #444d81 51%, #615c9b 100%); color: #fff; }
+  .map::before { content: ""; position: absolute; inset: 0; pointer-events: none; background: radial-gradient(ellipse at 48% 53%, transparent 45%, #151b483b 100%); z-index: 1; }
+  .map-canvas, .labels, .stars { position: absolute; inset: 0; }
+  .map-canvas { touch-action: none; cursor: grab; z-index: 2; }
+  .map-canvas.pointing { cursor: pointer; }
+  .map-canvas.dragging { cursor: grabbing; }
+  .map-canvas canvas { display: block; width: 100%; height: 100%; }
+  .stars { pointer-events: none; }
+  .star { position: absolute; width: var(--size); height: var(--size); border-radius: 50%; background: #fff7ea; opacity: var(--opacity); }
+  .star.cross { border-radius: 0; clip-path: polygon(50% 0, 60% 40%, 100% 50%, 60% 60%, 50% 100%, 40% 60%, 0 50%, 40% 40%); }
+  .labels { pointer-events: none; z-index: 3; }
+  .island-pin { pointer-events: auto; position: absolute; top: 0; left: 0; display: flex; align-items: center; justify-content: flex-start; gap: 6px; border: 1px solid #fff7; border-radius: 99px; min-height: 31px; padding: 3px 9px 3px 4px; background: #28294de8; color: #fffefa; white-space: nowrap; font-size: .79rem; font-weight: 750; box-shadow: 0 4px 12px #17193048; }
+  .island-pin:hover, .island-pin:focus-visible, .island-pin[aria-pressed=true] { background: #493a73; border-color: #fff; box-shadow: 0 0 18px #ece4ff87; }
+  .island-pin:focus-visible, .map-control:focus-visible { outline-color: #fff4b6; }
+  .pin-letter { display: grid; place-items: center; width: 22px; height: 22px; border-radius: 50%; color: #28253a; background: var(--unit-color); font-size: .72rem; }
+  .map-top, .map-bottom { position: absolute; left: 18px; right: 18px; display: flex; align-items: center; justify-content: space-between; gap: 12px; pointer-events: none; z-index: 4; }
+  .map-top { top: 16px; align-items: flex-start; }
+  .map-bottom { bottom: 15px; }
+  .map-top button, .map-bottom button { pointer-events: auto; }
+  .map-caption { display: inline-flex; align-items: center; gap: 8px; background: #292e53d9; border: 1px solid #ffffff40; border-radius: 9px; padding: 7px 10px; font-size: .77rem; font-weight: 750; }
+  .map-caption .icon { color: #e3d7ff; width: 16px; height: 16px; }
+  .map-control { color: #fff; background: #292e53e8; border-color: #ffffff40; }
+  .map-control:hover { background: #494374; }
+  .zoom-tools { display: inline-flex; border-radius: 10px; background: #292e53e8; border: 1px solid #ffffff40; }
+  .zoom-tools .map-control { border: 0; border-radius: 0; background: transparent; width: 38px; min-height: 37px; padding: 6px; }
+  .zoom-tools .map-control:hover { background: #494374; border-radius: 9px; }
+  .zoom-tools .map-control + .map-control { border-left: 1px solid #ffffff40; }
+  .map-hint { display: inline-flex; align-items: center; gap: 7px; background: #292e53e0; border: 1px solid #ffffff34; border-radius: 9px; padding: 8px 10px; font-size: .77rem; margin: 0; }
+  .map-hint .icon { width: 15px; height: 15px; }
+  .rail { min-width: 0; min-height: 0; overflow: auto; overscroll-behavior: contain; background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); box-shadow: 0 6px 22px #33285508; scrollbar-color: #d1c4e4 transparent; }
+  .rail-head { padding: 20px 19px 14px; }
+  .rail-head h2 { font-size: 1.24rem; margin-bottom: 2px; letter-spacing: -.035em; }
+  .rail-head p { color: var(--muted); font-size: .91rem; margin-bottom: 0; }
+  .unit-list { padding: 0 13px 13px; margin: 0; list-style: none; display: grid; gap: 7px; }
+  .unit-link { width: 100%; display: grid; grid-template-columns: 44px minmax(0, 1fr) 16px; align-items: center; gap: 10px; text-align: left; border: 1px solid #ebe7ee; border-radius: 12px; padding: 8px; min-height: 60px; background: #fffefa; }
+  .unit-link:hover, .unit-link:focus-visible { background: #f7f3ff; border-color: #c8bae6; }
+  .unit-icon { width: 44px; height: 44px; display: grid; place-items: center; border-radius: 10px; color: #30264b; background: var(--unit-color); }
+  .unit-icon .icon { width: 22px; height: 22px; }
+  .unit-meta { display: block; font-size: .73rem; color: #625874; line-height: 1.25; font-weight: 750; }
+  .unit-name { display: block; font-weight: 760; font-size: .88rem; line-height: 1.2; margin-top: 3px; }
+  .unit-link > .icon { color: #756986; width: 15px; height: 15px; }
+  .rail-foot { margin: 0 15px; border-top: 1px solid var(--line); padding: 10px 4px 12px; color: var(--muted); font-size: .78rem; }
+  .overview-detail { padding: 16px 15px; }
+  .back { margin-bottom: 13px; min-height: 37px; }
+  .back .icon { width: 16px; height: 16px; }
+  .detail-actions { display: flex; align-items: center; flex-wrap: wrap; gap: 7px; margin-bottom: 13px; }
+  .detail-actions .back { margin: 0; }
+  .detail-banner { background: var(--unit-color); padding: 13px 14px; border-radius: 13px; }
+  .detail-banner .unit-meta { color: #4e405f; }
+  .detail-banner h2 { font-size: 1.35rem; line-height: 1.17; margin: 4px 0 0; letter-spacing: -.036em; }
+  .detail-intro { color: var(--muted); margin: 13px 1px; font-size: .93rem; }
+  .lesson-heading, .activity h3 { margin: 0 0 6px; font-size: 1rem; }
+  .lesson-list { list-style: none; padding: 0; margin: 0 0 16px; }
+  .lesson-list li { border-top: 1px solid var(--line); display: grid; grid-template-columns: 2.35rem minmax(0, 1fr); gap: 5px; padding: 9px 0; }
+  .lesson-id { color: var(--violet); font-weight: 780; font-size: .78rem; padding-top: 2px; }
+  .lesson-title, .lesson-description { display: block; font-size: .87rem; line-height: 1.4; }
+  .lesson-description { color: var(--muted); margin-top: 3px; }
+  .activity { background: #f5f0fb; border: 1px solid #e9e0f5; border-radius: 12px; padding: 12px; font-size: .9rem; }
+  .activity p { margin-bottom: 9px; }
+  .activity [role=status] { color: #4f3b78; margin: 8px 0 0; }
+  .activity [role=status]:empty { margin: 0; }
+  .activity fieldset { margin: 8px 0; padding: 0; border: 0; display: grid; gap: 4px; }
+  .activity legend, .activity label, .activity .prompt { font-weight: 700; }
+  .activity select, .activity textarea { width: 100%; margin: 5px 0 8px; border: 1px solid #cfc1dd; border-radius: 8px; padding: 7px; background: #fffefa; color: var(--ink); }
+  .activity textarea { resize: vertical; min-height: 76px; }
+  .activity input[type=checkbox] { accent-color: var(--violet); margin: 0 4px 0 0; }
+  .choices { display: flex; gap: 6px; flex-wrap: wrap; }
+  .action { border-color: #d9cde9; min-height: 36px; font-size: .8rem; }
+  .action.primary { color: #fff; background: #5b4590; border-color: #5b4590; }
+  .action.primary:hover { background: #46336f; }
+  .cards { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-bottom: 8px; }
+  .cards .action { padding: 6px; text-align: center; display: grid; width: 100%; align-content: center; }
+  .cards small { font-size: .72rem; font-weight: 550; }
+  .comparison-fields { margin-top: 8px; }
+  .mode-note { margin: 0 0 12px; color: var(--muted); font-size: .88rem; }
+  .text-mode .map { display: none; }
+  .text-mode .workspace { grid-template-columns: minmax(0, 760px); grid-template-rows: auto; }
+  .text-mode .unit-list { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .text-mode .rail { overflow: visible; }
+  .footer { display: flex; justify-content: space-between; align-items: center; gap: 8px 18px; flex-wrap: wrap; padding: 13px 1px 17px; color: #666177; font-size: .79rem; }
+  .footer strong { color: #50446a; }
+  .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+  .low { line-height: 1.62; letter-spacing: .009em; --lavender: #efecf3; --violet: #584a70; }
+  .low .map { background: #d7d7e1; }
+  .low .map-canvas { filter: saturate(.53); }
+  .low .map::before, .low .stars { display: none; }
+  .low .island-pin, .low .island-pin:hover, .low .island-pin:focus-visible { box-shadow: none; }
+  .low .island-pin:focus-visible { outline-color: #4c3688; }
+  .low .unit-icon, .low .pin-letter, .low .detail-actions { display: flex; align-items: center; flex-wrap: wrap; gap: 7px; margin-bottom: 13px; }
+  .detail-actions .back { margin: 0; }
+  .detail-banner { background: color-mix(in srgb, var(--unit-color), #e1e0e3 60%); }
+  .low .intro-copy, .low .detail-intro, .low .lesson-description, .low .activity { font-size: 1rem; }
+  @media (max-width: 1080px) {
+    .shell { width: calc(100% - 42px); }
+    .workspace { grid-template-columns: minmax(0, 1fr) minmax(275px, 305px); }
+  }
+  @media (max-width: 850px) {
+    .workspace { grid-template-columns: minmax(0, 1fr); grid-template-rows: clamp(400px, 60vw, 560px) auto; }
+    .rail { overflow: visible; }
+    .unit-list { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .overview-detail { padding-inline: 19px; }
+  }
+  @media (max-width: 560px) {
+    .shell { width: calc(100% - 24px); }
+    .topbar-inner { align-items: flex-start; flex-direction: column; gap: 8px; }
+    .top-tools { gap: 6px; }
+    .tool { padding-inline: 7px; font-size: .79rem; min-height: 36px; }
+    .volume { width: 43px; margin-right: 0; }
+    .intro { padding: 21px 1px 16px; }
+    .title-line { display: block; }
+    .title-line h1 { display: inline; }
+    .byline { margin-left: 7px; }
+    .workspace { gap: 12px; grid-template-rows: 415px auto; }
+    .workspace:has(.overview-detail:not([hidden])) { grid-template-rows: 338px auto; }
+    .text-mode .workspace:has(.overview-detail:not([hidden])) { grid-template-rows: auto; }
+    .map-top, .map-bottom { left: 9px; right: 9px; gap: 5px; }
+    .map-top { top: 9px; }
+    .map-bottom { bottom: 9px; }
+    .map-hint { max-width: 67%; font-size: .7rem; line-height: 1.3; }
+    .zoom-tools .map-control { width: 31px; }
+    .island-pin { width: 36px; height: 36px; min-height: 36px; padding: 0; justify-content: center; }
+    .pin-letter { display: flex; align-items: center; justify-content: center; line-height: 1; }
+    .pin-name { display: none; }
+    .unit-list, .text-mode .unit-list { grid-template-columns: minmax(0, 1fr); }
+  }
+</style>
+</head>
+<body>
+<!-- Shared interface symbols. The island artwork itself is Three.js geometry. -->
+<svg xmlns="http://www.w3.org/2000/svg" class="sr-only" aria-hidden="true">
+  <symbol id="i-orbit" viewBox="0 0 24 24"><circle cx="12" cy="12" r="5"/><ellipse cx="12" cy="12" rx="11" ry="4" transform="rotate(-34 12 12)"/><path d="M18 3h4m-2-2v4"/></symbol>
+  <symbol id="i-spark" viewBox="0 0 24 24"><path d="M12 2c0 6-4 10-10 10 6 0 10 4 10 10 0-6 4-10 10-10-6 0-10-4-10-10Z"/></symbol>
+  <symbol id="i-compass" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="m15.5 8.5-2 5-5 2 2-5 5-2Z"/></symbol>
+  <symbol id="i-music" viewBox="0 0 24 24"><path d="M9 17V5l11-2v12M9 9l11-2"/><ellipse cx="6" cy="17.5" rx="3" ry="2.5"/><ellipse cx="17" cy="15.5" rx="3" ry="2.5"/></symbol>
+  <symbol id="i-list" viewBox="0 0 24 24"><path d="M9 6h12M9 12h12M9 18h12M3 6h1m-1 6h1m-1 6h1"/></symbol>
+  <symbol id="i-mouse" viewBox="0 0 24 24"><rect x="6" y="3" width="12" height="18" rx="6"/><path d="M12 7v4"/></symbol>
+  <symbol id="i-minus" viewBox="0 0 24 24"><path d="M5 12h14"/></symbol>
+  <symbol id="i-plus" viewBox="0 0 24 24"><path d="M5 12h14m-7-7v14"/></symbol>
+  <symbol id="i-reset" viewBox="0 0 24 24"><path d="M4 11a8 8 0 1 1 2 6m-2-6V5m0 6h6"/></symbol>
+  <symbol id="i-next" viewBox="0 0 24 24"><path d="m9 5 7 7-7 7"/></symbol>
+  <symbol id="i-back" viewBox="0 0 24 24"><path d="m13 5-7 7 7 7M6 12h14"/></symbol>
+  <symbol id="i-camera" viewBox="0 0 24 24"><path d="M3 7h5l2-3h4l2 3h5v13H3Z"/><circle cx="12" cy="13" r="3.5"/></symbol>
+  <symbol id="i-vision" viewBox="0 0 24 24"><path d="M3 9V4h5m8 0h5v5m0 6v5h-5m-8 0H3v-5m4-3c3-5 7-5 10 0-3 5-7 5-10 0Z"/><circle cx="12" cy="12" r="1"/></symbol>
+  <symbol id="i-art" viewBox="0 0 24 24"><path d="m4 19 9-9m-5 2 4 4m6-13v7m-3.5-3.5h7M6 3v4M4 5h4m8 13v4m-2-2h4"/></symbol>
+  <symbol id="i-robot" viewBox="0 0 24 24"><rect x="4" y="8" width="16" height="12" rx="3"/><path d="M12 4v4M2 12v4m20-4v4M9 16h6"/><circle cx="9" cy="12" r=".6"/><circle cx="15" cy="12" r=".6"/></symbol>
+  <symbol id="i-dish" viewBox="0 0 24 24"><path d="M4 5a10 10 0 0 0 15 13L4 5Zm7 9 6-7m-7 12-2 3h10l-2-3M18 3a5 5 0 0 1 4 4"/><circle cx="17.4" cy="6.5" r="1.2"/></symbol>
+</svg>
+<header class="topbar">
+  <div class="shell topbar-inner">
+    <div class="brand"><span class="brand-icon"><svg class="icon" aria-hidden="true"><use href="#i-orbit"/></svg></span>Pforzheim University</div>
+    <div class="top-tools" aria-label="View and comfort options">
+      <div class="audio-group">
+        <button class="tool" id="music" type="button" aria-pressed="false"><svg class="icon" aria-hidden="true"><use href="#i-music"/></svg><span>Music off</span></button>
+        <label class="sr-only" for="volume">Music volume</label><input class="volume" id="volume" type="range" min="0" max="100" value="34">
+      </div>
+      <button class="tool" id="low" type="button" aria-pressed="false"><span class="switch" aria-hidden="true"></span>Low-stimulation mode</button>
+    </div>
+  </div>
+</header>
+<main class="shell">
+  <div class="intro">
+    <p class="eyebrow"><svg class="icon" aria-hidden="true"><use href="#i-compass"/></svg>Interactive course map</p>
+    <div class="title-line"><h1>Pforzheim AI Course Islands</h1><span class="byline">by Prof Luarn</span></div>
+    <p class="intro-copy">Explore six islands, discover the lessons, and try a hands-on activity in each unit.</p>
+  </div>
+  <div class="workspace">
+    <section class="map" id="map" aria-label="Interactive 3D course map">
+      <div class="stars" id="stars" aria-hidden="true"></div>
+      <div class="map-canvas" id="map-canvas" aria-hidden="true"></div>
+      <div class="labels" id="labels" role="group" aria-label="Islands on the map"></div>
+      <div class="map-top">
+        <span class="map-caption"><svg class="icon" aria-hidden="true"><use href="#i-compass"/></svg><span id="map-caption">Archipelago overview</span></span>
+        <button class="map-control" id="skip" type="button"><svg class="icon" aria-hidden="true"><use href="#i-list"/></svg>Skip 3D view</button>
+      </div>
+      <div class="map-bottom">
+        <p class="map-hint" id="map-hint"><svg class="icon" aria-hidden="true"><use href="#i-mouse"/></svg><span>Drag to rotate, scroll to zoom, click an island to explore.</span></p>
+        <div class="zoom-tools" role="group" aria-label="Map controls">
+          <button class="map-control" id="zoom-out" type="button" aria-label="Zoom out" title="Zoom out"><svg class="icon" aria-hidden="true"><use href="#i-minus"/></svg></button>
+          <button class="map-control" id="reset-view" type="button" aria-label="Reset camera" title="Reset camera"><svg class="icon" aria-hidden="true"><use href="#i-reset"/></svg></button>
+          <button class="map-control" id="zoom-in" type="button" aria-label="Zoom in" title="Zoom in"><svg class="icon" aria-hidden="true"><use href="#i-plus"/></svg></button>
+        </div>
+      </div>
+    </section>
+    <aside class="rail" id="rail" aria-label="Course islands and lessons">
+      <nav id="directory" aria-labelledby="directory-title">
+        <div class="rail-head">
+          <p class="mode-note" id="mode-note" role="status" hidden></p>
+          <button class="back" id="show-map" type="button" hidden>Return to 3D view</button>
+          <h2 id="directory-title" tabindex="-1">Explore the islands</h2>
+          <p>Choose a unit to start exploring.</p>
+        </div>
+        <ol class="unit-list" id="unit-list"></ol>
+        <p class="rail-foot">Use Tab to move and Enter to explore.</p>
+      </nav>
+      <section class="overview-detail" id="unit-detail" aria-labelledby="unit-title" hidden>
+        <div class="detail-actions">
+          <button class="back" id="back" type="button"><svg class="icon" aria-hidden="true"><use href="#i-back"/></svg>Back to overview</button>
+          <button class="action" id="jump-activity" type="button">Try activity</button>
+        </div>
+        <div id="detail-content"></div>
+      </section>
+    </aside>
+  </div>
+  <footer class="footer"><strong>Pforzheim AI Course</strong><span id="counts"></span></footer>
+  <p id="audio-status" class="sr-only" role="status"></p>
+  <noscript><p>Enable JavaScript to use the island guide and activities.</p></noscript>
+</main>
+<script>
+"use strict";
+
+// Customize island names, lesson copy, colors, and map positions together here.
+// Positions are [x, z]. The map uses the same palette as the course directory.
+const islands = [
+  {
+    name: "Island A", short: "Getting Started", icon: "camera", color: "#c7e8bd",
+    rock: "#9074a4", trim: "#ffe0aa", position: [-6.15, -3.9],
+    title: "Getting Started with Perceptual AI",
+    intro: "Start by introducing yourself on the web. Then explore how AI can recognize what it sees in images and video, and train a model with examples of your own.",
+    lessons: [
+      ["Build your own personal web page and course introduction", "Create a personal page and use it to introduce yourself to the course."],
+      ["Introduction to Google MediaPipe Tasks (perceptual AI)", "Explore ready-made tools for helping software interpret what it sees."],
+      ["Train your own recognition model with Teachable Machine", "Collect example inputs and train a model to tell your categories apart."],
+      ["Image object recognition with Google Antigravity", "Build a small experiment that identifies objects in a still image."],
+      ["Video object recognition with Google Antigravity", "Try object recognition across frames in a video."]
+    ]
+  },
+  {
+    name: "Island B", short: "Vision Tasks", icon: "vision", color: "#c9ddff",
+    rock: "#697faf", trim: "#e5e8ff", position: [0, -6.5],
+    title: "MediaPipe Vision Tasks",
+    intro: "A vision task can find a face, track a pose, or separate the foreground from the background. Try several MediaPipe tasks and learn how to choose one for the question you want to answer.",
+    lessons: [
+      ["MediaPipe Face Landmark Detection", "Find key points around the eyes, nose, and mouth in an image."],
+      ["MediaPipe Video Face Landmark Detection", "Follow facial points as they move through video frames."],
+      ["MediaPipe Pose Landmark Detection", "Estimate where key body joints are in an image or feed."],
+      ["MediaPipe Gesture Recognition", "Recognize a hand gesture from visual input."],
+      ["MediaPipe Image Segmentation", "Divide an image into regions such as a person and their background."],
+      ["MediaPipe Face Detection", "Locate faces in an image and see where each detected face is."]
+    ]
+  },
+  {
+    name: "Island C", short: "Creative AI", icon: "art", color: "#f6c4dc",
+    rock: "#a876a9", trim: "#ffdcb8", position: [6.15, -3.45],
+    title: "Real-Time Models and Creative AI",
+    intro: "Bring models into live and creative projects. Classify camera input, experiment with visual styles, build a chat interface, and finish with an island of your own.",
+    lessons: [
+      ["Teachable Machine Real-Time Object Classifier", "Use a model you trained to classify objects from a live camera feed."],
+      ["YOLO", "Explore how an object detector labels and locates objects in a scene."],
+      ["Neural Style Transfer", "Apply the visual style of one image to the content of another."],
+      ["Simple Chat App Built with a Gemini API Key", "Build a small chat interface that sends a prompt and displays a response."],
+      ["Island Builder", "Put your web and design skills together by building an interactive island."]
+    ]
+  },
+  {
+    name: "Island D", short: "Multimodal AI", icon: "spark", color: "#dfcff7",
+    rock: "#8c78b6", trim: "#fce7f1", position: [-6.05, 3.45],
+    title: "Gemini and Multimodal Workflows",
+    intro: "Work with more than one kind of input, starting with images and text. Then explore how Gemini tools can fit together in study, writing, and project workflows.",
+    lessons: [
+      ["Use a multimodal model to let Ollama recognize images", "Ask a vision-capable model running in Ollama to describe an image."],
+      ["Gemini", "Practice giving a model a clear task, context, and an output format."],
+      ["Gemini Notebook", "Explore a notebook-based workflow with course materials."],
+      ["Gemini Canvas", "Draft and revise an idea in a working space."],
+      ["Gemini Skills-1", "Start with a simple reusable set of instructions."],
+      ["Gemini Skills-2", "Refine instructions using examples and test cases."],
+      ["Gemini Skills-3", "Try a refined skill in a larger workflow and review the results."]
+    ]
+  },
+  {
+    name: "Island E", short: "AI Agents", icon: "robot", color: "#ffdbac",
+    rock: "#aa7c8e", trim: "#fce8a7", position: [0, 6.05],
+    title: "AI Agents",
+    intro: "Explore how AI can take on multi-step tasks with instructions, tools, and review points. Compare different ways of building workflows and decide where a person should stay involved.",
+    lessons: [
+      ["n8n", "Sketch a workflow that connects a trigger to a series of actions."],
+      ["ChatGPT multi-agent", "Try splitting one task into roles and passing work between them."],
+      ["ChatGPT Skills", "Write reusable instructions for a recurring task."],
+      ["ChatGPT Plugins - canva", "Explore a design workflow using the Canva integration in class."],
+      ["ChatGPT Sites", "Explore a workflow for building a simple site from a brief."],
+      ["Claude Skills", "Explore how a reusable skill can guide a recurring task."],
+      ["OpenClaw", "Explore OpenClaw in class and record how the workflow is organized."],
+      ["Hermes Agent", "Explore Hermes Agent in class and compare the experience with another approach."]
+    ]
+  },
+  {
+    name: "Island F", short: "Next Wave", icon: "dish", color: "#b3e9e3",
+    rock: "#5e8eaa", trim: "#d5f5eb", position: [6.2, 3.52],
+    title: "The Next Wave of AI Tools",
+    intro: "Explore a set of tools and examples in class. Try the same small task with two of them and compare what you observe firsthand.",
+    lessons: [
+      ["Meta Muse", "Explore in class and note a question you would like to investigate."],
+      ["Manus Cue!", "Explore in class and outline a small task you could use to evaluate it."],
+      ["Hark Pro", "Explore in class and record what you observe during the demo."],
+      ["OpenAI Dots", "Explore in class and choose one criterion for evaluating your experience."],
+      ["Grok Bot", "Explore in class and record one result you would check again."],
+      ["Claude Duet", "Explore in class and note how you would compare it with another example."]
+    ]
+  }
+];
+
+const byId = (id) => document.getElementById(id);
+const symbol = (name) => '<svg class="icon" aria-hidden="true"><use href="#i-' + name + '"/></svg>';
+const encode = (value) => String(value).replace(/[&<>"']/g, (character) => ({
+  "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"
+})[character]);
+const make = (tag, className, content) => {
+  const element = document.createElement(tag);
+  if (className) element.className = className;
+  if (content !== undefined) element.textContent = content;
+  return element;
+};
+const map = byId("map");
+const rail = byId("rail");
+const directory = byId("directory");
+const panel = byId("unit-detail");
+const panels = [];
+const islandButtons = [];
+const pinButtons = [];
+let sceneView;
+let current = -1;
+let origin;
+let textMode = false;
+let unavailable = false;
+
+function makeButton(label, handler, className = "action") {
+  const button = make("button", className, label);
+  button.type = "button";
+  button.addEventListener("click", handler);
+  return button;
+}
+
+function chooseIsland(index, trigger) {
+  if (current === -1) origin = trigger;
+  if (index !== current) {
+    current = index;
+    const island = islands[index];
+    if (!panels[index]) panels[index] = buildPanel(island, index);
+    byId("detail-content").replaceChildren(panels[index]);
+    directory.hidden = true;
+    panel.hidden = false;
+    pinButtons.forEach((pin, i) => pin.setAttribute("aria-pressed", i === index));
+    byId("map-caption").textContent = island.name + " · " + island.short;
+    sceneView?.goTo(index);
+    rail.scrollTop = 0;
+  }
+  byId("unit-title").focus({preventScroll: true});
+  if (textMode) {
+    panel.scrollIntoView({block: "nearest"});
+  } else if (matchMedia("(max-width: 850px)").matches) {
+    map.scrollIntoView({block: "start"});
+  }
+}
+
+function overview(restoreFocus = true) {
+  if (current < 0) return;
+  const index = current;
+  current = -1;
+  panel.hidden = true;
+  directory.hidden = false;
+  pinButtons.forEach((pin) => pin.setAttribute("aria-pressed", "false"));
+  byId("map-caption").textContent = "Archipelago overview";
+  sceneView?.goTo(-1);
+  rail.scrollTop = 0;
+  if (restoreFocus) {
+    const target = origin?.isConnected && !origin.hidden && !textMode ? origin : islandButtons[index];
+    target.focus({preventScroll: true});
+    target.scrollIntoView({block: "nearest"});
+  }
+}
+
+function setTextMode(enabled, message = "", moveFocus = true) {
+  textMode = enabled;
+  overview(false);
+  document.body.classList.toggle("text-mode", enabled);
+  byId("show-map").hidden = !enabled || unavailable;
+  byId("mode-note").hidden = !message;
+  byId("mode-note").textContent = message;
+  sceneView?.refresh();
+  if (moveFocus) (enabled ? byId("directory-title") : byId("skip")).focus({preventScroll: true});
+}
+
+islands.forEach((island, index) => {
+  const letter = String.fromCharCode(65 + index);
+  const label = island.name + ", Unit " + (index + 1) + ", " + island.title;
+  const row = make("li");
+  const link = makeButton("", (event) => chooseIsland(index, event.currentTarget), "unit-link");
+  link.style.setProperty("--unit-color", island.color);
+  link.setAttribute("aria-label", label);
+  link.setAttribute("aria-controls", "unit-detail");
+  link.innerHTML = '<span class="unit-icon">' + symbol(island.icon) + '</span><span><span class="unit-meta">' + encode(island.name) + ' · Unit ' + (index + 1) + '</span><span class="unit-name">' + encode(island.title) + '</span></span>' + symbol("next");
+  row.append(link);
+  byId("unit-list").append(row);
+  islandButtons.push(link);
+
+  const pin = makeButton("", (event) => chooseIsland(index, event.currentTarget), "island-pin");
+  pin.hidden = true;
+  pin.style.setProperty("--unit-color", island.color);
+  pin.setAttribute("aria-label", label);
+  pin.setAttribute("aria-pressed", "false");
+  pin.setAttribute("aria-controls", "unit-detail");
+  pin.innerHTML = '<span class="pin-letter">' + letter + '</span><span class="pin-name">' + encode(island.short) + '</span>';
+  pin.addEventListener("pointerenter", () => sceneView?.hover(index));
+  pin.addEventListener("pointerleave", () => sceneView?.hover(-1));
+  pin.addEventListener("focus", () => sceneView?.highlight(index));
+  pin.addEventListener("blur", () => sceneView?.highlight(-1));
+  byId("labels").append(pin);
+  pinButtons.push(pin);
+});
+
+const totalLessons = islands.reduce((count, island) => count + island.lessons.length, 0);
+byId("counts").textContent = islands.length + " islands · " + totalLessons + " lessons · " + islands.length + " activities";
+byId("back").addEventListener("click", () => overview());
+byId("jump-activity").addEventListener("click", () => {
+  const heading = panel.querySelector(".activity h3");
+  heading.focus({preventScroll: true});
+  heading.scrollIntoView({block: "nearest"});
+});
+byId("skip").addEventListener("click", () => setTextMode(true, "Text-only course map. All six activities are available here."));
+byId("show-map").addEventListener("click", () => setTextMode(false));
+byId("reset-view").addEventListener("click", () => current >= 0 ? overview() : sceneView?.goTo(-1));
+byId("zoom-in").addEventListener("click", () => sceneView?.zoom(0.84));
+byId("zoom-out").addEventListener("click", () => sceneView?.zoom(1.19));
+document.addEventListener("keydown", (event) => {
+  if (event.key === "Escape" && current >= 0) {
+    event.preventDefault();
+    overview();
+  }
+});
+
+function buildPanel(island, index) {
+  const content = make("div");
+  content.style.setProperty("--unit-color", island.color);
+  content.innerHTML = '<div class="detail-banner"><p class="unit-meta">' + encode(island.name) + ' · Unit ' + (index + 1) + '</p><h2 id="unit-title" tabindex="-1">' + encode(island.title) + '</h2></div>' +
+    '<p class="detail-intro">' + encode(island.intro) + '</p><h3 class="lesson-heading">Lessons</h3><ol class="lesson-list">' +
+    island.lessons.map(([title, description], lesson) =>
+      '<li><span class="lesson-id">' + (index + 1) + '.' + (lesson + 1) + '</span><span><strong class="lesson-title">' + encode(title) + '</strong><span class="lesson-description">' + encode(description) + '</span></span></li>').join("") +
+    '</ol>';
+  content.append(activityBuilders[index]());
+  return content;
+}
+
+// Activities live in the DOM so progress survives visiting another island.
+function activityBlock(title, instruction) {
+  const block = make("section", "activity");
+  const heading = make("h3", "", title);
+  heading.tabIndex = -1;
+  const instructions = make("p", "", instruction);
+  const body = make("div");
+  const feedback = make("p");
+  feedback.setAttribute("role", "status");
+  block.append(heading, instructions, body, feedback);
+  return {block, body, feedback};
+}
+
+function quiz(title, instruction, questions, completion) {
+  const {block, body, feedback} = activityBlock(title, instruction);
+  const question = make("p", "prompt");
+  question.tabIndex = -1;
+  const choices = make("div", "choices");
+  const next = makeButton("Next", () => {
+    round += 1;
+    draw();
+    question.focus();
+  }, "action primary");
+  let round = 0;
+  body.append(question, choices, next);
+  function draw() {
+    const [prompt, answers, correct, explanation] = questions[round];
+    question.textContent = (round + 1) + " / " + questions.length + " · " + prompt;
+    choices.replaceChildren();
+    feedback.textContent = "";
+    next.hidden = true;
+    answers.forEach((answer, index) => {
+      const button = makeButton(answer, () => {
+        if (index !== correct) {
+          feedback.textContent = "Give it another try. Think about what the task needs to produce.";
+          return;
+        }
+        choices.querySelectorAll("button").forEach((choice) => { choice.disabled = true; });
+        button.setAttribute("aria-pressed", "true");
+        const finished = round === questions.length - 1;
+        feedback.textContent = explanation + (finished ? " " + completion : "");
+        next.hidden = finished;
+        if (finished) question.focus({preventScroll: true});
+        else next.focus({preventScroll: true});
+      });
+      button.setAttribute("aria-pressed", "false");
+      choices.append(button);
+    });
+  }
+  draw();
+  return block;
+}
+
+function pipeline() {
+  const {block, body, feedback} = activityBlock("Order the AI pipeline", "Select each step in the order it happens in a live camera classifier.");
+  const order = ["Input", "Model", "Output"];
+  const descriptions = {Input: "Collect a camera frame.", Model: "Classify the frame.", Output: "Show the predicted label."};
+  const sequence = make("ol");
+  sequence.setAttribute("aria-label", "Your pipeline");
+  const choices = make("div", "choices");
+  const reset = makeButton("Try again", () => {
+    sequence.replaceChildren();
+    feedback.textContent = "";
+    choices.querySelectorAll("button").forEach((button) => { button.disabled = false; });
+    reset.hidden = true;
+    choices.firstElementChild.focus();
+  });
+  reset.hidden = true;
+  ["Model", "Output", "Input"].forEach((step) => {
+    const button = makeButton(step, () => {
+      if (order[sequence.children.length] !== step) {
+        feedback.textContent = "Try another step. What does the classifier need at this point?";
+        return;
+      }
+      sequence.append(make("li", "", step + " · " + descriptions[step]));
+      button.disabled = true;
+      const complete = sequence.children.length === order.length;
+      reset.hidden = !complete;
+      feedback.textContent = complete ? "You built the pipeline. A frame goes in, the model processes it, and a label comes out." : "Step added. Choose what happens next.";
+      (choices.querySelector("button:not(:disabled)") || reset).focus({preventScroll: true});
+    });
+    choices.append(button);
+  });
+  body.append(choices, sequence, reset);
+  return block;
+}
+
+function helperBuilder() {
+  const {block, body, feedback} = activityBlock("Design your own helper", "Pick a goal, then choose the features you would combine.");
+  const goals = ["Review lecture notes", "Outline a project proposal", "Prepare for a design critique"];
+  const features = ["Notebook", "Canvas", "Skills", "Connectors", "Scheduled Tasks"];
+  const label = make("label", "", "Goal");
+  const select = make("select");
+  goals.forEach((goal) => select.add(make("option", "", goal)));
+  label.append(select);
+  const group = make("fieldset");
+  group.append(make("legend", "", "Features"));
+  features.forEach((feature) => {
+    const option = make("label");
+    const checkbox = make("input");
+    checkbox.type = "checkbox";
+    checkbox.value = feature;
+    option.append(checkbox, feature);
+    group.append(option);
+  });
+  const summarize = makeButton("Show my plan", () => {
+    const selected = Array.from(group.querySelectorAll(":checked"), (item) => item.value);
+    feedback.textContent = selected.length
+      ? "To " + select.value.toLowerCase() + ", you would try " + new Intl.ListFormat("en").format(selected) + ". Start with one small example and see where each feature helps."
+      : "Choose at least one feature to give your helper a starting point.";
+  }, "action primary");
+  body.append(label, group, summarize);
+  return block;
+}
+
+function agentSort() {
+  const block = quiz("Agent or chatbot?", "Sort each example by the way the system works.", [
+    ["Answers a question about an assignment when asked.", ["Agent", "Chatbot"], 1, "Chatbot. It replies to a question in the conversation."],
+    ["Checks a folder, summarizes new files, and prepares a report for approval.", ["Agent", "Chatbot"], 0, "Agent. It uses tools and follows several steps toward a goal."],
+    ["Rewrites the paragraph you paste into the chat.", ["Agent", "Chatbot"], 1, "Chatbot. It responds to the prompt you give it."]
+  ], "You sorted all three scenarios.");
+  const field = make("label", "comparison-fields", "What task would you hand to an agent?");
+  const answer = make("textarea");
+  answer.placeholder = "Describe one task and where you would check the result.";
+  field.append(answer);
+  block.append(field);
+  return block;
+}
+
+function toolExplorer() {
+  const {block, body, feedback} = activityBlock("Tool explorer", "Flip a card to reveal a class observation prompt. Choose two tools to compare.");
+  const prompts = [
+    "What would you try first?", "What input would you bring?", "What would you record?",
+    "What would a useful result look like?", "What would you double-check?", "What would you compare?"
+  ];
+  const cards = make("div", "cards");
+  const group = make("fieldset");
+  group.append(make("legend", "", "Choose two tools"));
+  const first = make("select"), second = make("select");
+  const toolNames = islands[5].lessons.map(([name]) => name);
+  toolNames.forEach((name, index) => {
+    const button = makeButton("", () => {
+      const flipped = button.getAttribute("aria-pressed") === "true";
+      button.setAttribute("aria-pressed", String(!flipped));
+      cardHint.textContent = flipped ? "Flip card" : prompts[index];
+    });
+    const cardHint = make("small", "", "Flip card");
+    button.append(make("strong", "", name), cardHint);
+    button.setAttribute("aria-pressed", "false");
+    cards.append(button);
+    first.add(make("option", "", name));
+    second.add(make("option", "", name));
+  });
+  second.selectedIndex = 1;
+  const firstLabel = make("label", "", "First tool");
+  const secondLabel = make("label", "", "Second tool");
+  firstLabel.append(first);
+  secondLabel.append(second);
+  group.append(firstLabel, secondLabel);
+  const reflection = make("label", "", "In one sentence, what would you try first?");
+  const answer = make("textarea");
+  reflection.append(answer);
+  const compare = makeButton("Review comparison", () => {
+    if (first.value === second.value) {
+      feedback.textContent = "Choose two different tools so you can compare them.";
+    } else if (!answer.value.trim()) {
+      feedback.textContent = "Write one sentence about what you would try first.";
+    } else {
+      feedback.textContent = "Your comparison is ready. Try that idea with " + first.value + " and " + second.value + " and record what you observe.";
+    }
+  }, "action primary");
+  body.append(cards, group, reflection, compare);
+  return block;
+}
+
+const activityBuilders = [
+  () => quiz("Match the tool to the task", "Click the tool that fits each task.", [
+    ["Train a model with your own labeled examples.", ["MediaPipe Tasks", "Teachable Machine", "Google Antigravity"], 1, "Teachable Machine fits a model from your examples."],
+    ["Try a ready-made way to track body landmarks.", ["MediaPipe Tasks", "Teachable Machine", "Google Antigravity"], 0, "MediaPipe Tasks includes ready-made vision tasks."],
+    ["Work on the course’s image-recognition web project with coding assistance.", ["MediaPipe Tasks", "Teachable Machine", "Google Antigravity"], 2, "Google Antigravity is the coding workspace used in that lesson."]
+  ], "All three tools matched."),
+  () => quiz("Which task would you use?", "Choose a MediaPipe task for each goal.", [
+    ["Keep a person visible while replacing their background.", ["Face Detection", "Image Segmentation", "Gesture Recognition"], 1, "Image Segmentation can separate a person from the background."],
+    ["Track a dancer’s elbows and knees.", ["Pose Landmark Detection", "Face Landmark Detection", "Image Segmentation"], 0, "Pose Landmark Detection tracks key body joints."],
+    ["Recognize a thumbs-up from a hand.", ["Face Detection", "Pose Landmark Detection", "Gesture Recognition"], 2, "Gesture Recognition can label a hand gesture."]
+  ], "You chose a task for every scenario."),
+  pipeline,
+  helperBuilder,
+  agentSort,
+  toolExplorer
+];
+// Comfort settings and browser-generated music. No audio starts without a gesture.
+const motion = matchMedia("(prefers-reduced-motion: reduce)");
+function readSession(key) {
+  try { return sessionStorage.getItem("course-islands." + key); } catch { return null; }
+}
+function writeSession(key, value) {
+  try { sessionStorage.setItem("course-islands." + key, value); } catch { /* Storage can be blocked on local files. */ }
+}
+
+let low = motion.matches;
+let musicRequested = readSession("music") === "true";
+let musicOn = false;
+let audio;
+let master;
+let timer;
+let melodyStep = 0;
+let nextNote = 0;
+const musicButton = byId("music");
+const volume = byId("volume");
+volume.value = readSession("volume") ?? volume.value;
+
+// MIDI notes and timing are the main knobs for customizing the ambient soundtrack.
+const ambientMusic = {
+  melody: [60, 67, 69, 64, 67, 62, 60, 64, 69, 67, 64, 62],
+  bass: [48, 45, 43],
+  beat: 1.85,
+  fadeIn: .54,
+  noteLength: 3.15,
+  outputLevel: .16
+};
+
+function voice(note, start, length, strength, type = "sine") {
+  const oscillator = audio.createOscillator();
+  const envelope = audio.createGain();
+  oscillator.type = type;
+  oscillator.frequency.value = 440 * Math.pow(2, (note - 69) / 12);
+  envelope.gain.setValueAtTime(.0001, start);
+  envelope.gain.exponentialRampToValueAtTime(strength, start + ambientMusic.fadeIn);
+  envelope.gain.exponentialRampToValueAtTime(.0001, start + length);
+  oscillator.connect(envelope).connect(master);
+  oscillator.start(start);
+  oscillator.stop(start + length + .03);
+}
+
+function queueNotes() {
+  if (!musicOn || audio.state !== "running") return;
+  nextNote = Math.max(nextNote, audio.currentTime + .05);
+  if (nextNote > audio.currentTime + .22) return;
+  const pitch = ambientMusic.melody[melodyStep % ambientMusic.melody.length];
+  voice(pitch, nextNote, ambientMusic.noteLength, .24);
+  if (melodyStep % 4 === 0) {
+    const bass = ambientMusic.bass[Math.floor(melodyStep / 4) % ambientMusic.bass.length];
+    voice(bass, nextNote, ambientMusic.beat * 4, .17);
+    voice(bass + 12, nextNote + .2, ambientMusic.beat * 3, .07, "triangle");
+  }
+  melodyStep += 1;
+  nextNote += ambientMusic.beat;
+}
+
+function syncAudioUI() {
+  musicButton.disabled = low;
+  volume.disabled = low;
+  musicButton.setAttribute("aria-pressed", String(musicOn));
+  musicButton.querySelector("span").textContent = musicOn ? "Music on" : "Music off";
+  musicButton.title = low ? "Music is muted in low-stimulation mode" :
+    musicRequested && !musicOn ? "Click to resume your session music" : "";
+}
+
+function applyVolume() {
+  if (master) master.gain.setTargetAtTime(musicOn ? Number(volume.value) / 100 * ambientMusic.outputLevel : 0, audio.currentTime, .09);
+}
+
+function stopMusic() {
+  musicOn = false;
+  clearInterval(timer);
+  applyVolume();
+  syncAudioUI();
+}
+
+async function startMusic() {
+  if (low || !musicRequested) return;
+  try {
+    if (!audio) {
+      const AudioEngine = window.AudioContext || window.webkitAudioContext;
+      audio = new AudioEngine();
+      master = audio.createGain();
+      master.gain.value = 0;
+      master.connect(audio.destination);
+    }
+    await audio.resume();
+    if (low || !musicRequested || audio.state !== "running") return;
+    musicOn = true;
+    nextNote = audio.currentTime + .07;
+    applyVolume();
+    clearInterval(timer);
+    queueNotes();
+    timer = setInterval(queueNotes, 120);
+    syncAudioUI();
+  } catch {
+    byId("audio-status").textContent = "Background music is unavailable in this browser.";
+    stopMusic();
+  }
+}
+
+function setLow(value) {
+  low = value;
+  document.body.classList.toggle("low", low);
+  byId("low").setAttribute("aria-pressed", String(low));
+  if (low) stopMusic();
+  syncAudioUI();
+  sceneView?.refresh();
+}
+
+musicButton.addEventListener("click", () => {
+  musicRequested = !musicOn;
+  writeSession("music", musicRequested);
+  if (musicRequested) startMusic();
+  else stopMusic();
+});
+volume.addEventListener("input", () => {
+  writeSession("volume", volume.value);
+  applyVolume();
+});
+function resumeSessionMusic(event) {
+  if (!event.isTrusted || low || !musicRequested || musicOn) return;
+  if (event.target.closest?.("#music, #low")) return;
+  startMusic();
+}
+document.addEventListener("click", resumeSessionMusic);
+byId("low").addEventListener("click", () => {
+  setLow(!low);
+  if (!low && musicRequested) startMusic();
+});
+motion.addEventListener("change", (event) => setLow(event.matches));
+window.addEventListener("pagehide", stopMusic);
+setLow(low);
+
+// Seeded stars and small landscape details give a stable composition on reload.
+function seededRandom(seed) {
+  return () => {
+    seed = (Math.imul(seed, 1664525) + 1013904223) >>> 0;
+    return seed / 4294967296;
+  };
+}
+
+function scatterStars() {
+  const random = seededRandom(35812);
+  const stars = byId("stars");
+  const fragment = document.createDocumentFragment();
+  for (let i = 0; i < 132; i += 1) {
+    const cross = i % 15 === 0;
+    const star = make("i", cross ? "star cross" : "star");
+    star.style.left = (1 + random() * 98) + "%";
+    star.style.top = (1 + random() * 98) + "%";
+    star.style.setProperty("--size", (cross ? 5 + random() * 7 : .8 + random() * 2.1) + "px");
+    star.style.setProperty("--opacity", .17 + random() * .48);
+    fragment.append(star);
+  }
+  stars.append(fragment);
+}
+
+// Each island is drawn from low-poly primitives with a shared terrain shape.
+function buildLandscape(THREE, scene) {
+  const materials = new Map();
+  const geometry = {
+    cube: new THREE.BoxGeometry(1, 1, 1),
+    ball: new THREE.SphereGeometry(1, 13, 9),
+    gem: new THREE.OctahedronGeometry(1),
+    stone: new THREE.IcosahedronGeometry(1, 0),
+    round: new THREE.CylinderGeometry(1, 1, 1, 24),
+    cone: new THREE.ConeGeometry(1, 1, 8)
+  };
+  function material(color) {
+    if (!materials.has(color)) materials.set(color, new THREE.MeshStandardMaterial({color, roughness: .79}));
+    return materials.get(color);
+  }
+  function model(parent, shape, color, x, y, z, sx, sy, sz) {
+    const mesh = new THREE.Mesh(geometry[shape], material(color));
+    mesh.position.set(x, y, z);
+    mesh.scale.set(sx, sy, sz);
+    parent.add(mesh);
+    return mesh;
+  }
+  function cylinderFront(parent, color, x, y, z, radius, depth) {
+    const disc = model(parent, "round", color, x, y, z, radius, depth, radius);
+    disc.rotation.x = Math.PI / 2;
+    return disc;
+  }
+  function rod(parent, color, start, end, radius) {
+    const a = new THREE.Vector3(...start);
+    const b = new THREE.Vector3(...end);
+    const direction = b.clone().sub(a);
+    const middle = a.lerp(b, .5);
+    const bar = model(parent, "round", color, middle.x, middle.y, middle.z, radius, direction.length(), radius);
+    bar.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), direction.normalize());
+    return bar;
+  }
+  function tree(parent, x, z, scale, color, pine = false) {
+    model(parent, "round", "#9e7890", x, .16 * scale, z, .07 * scale, .36 * scale, .07 * scale);
+    if (pine) {
+      model(parent, "cone", color, x, .48 * scale, z, .28 * scale, .59 * scale, .28 * scale);
+      model(parent, "cone", color, x, .68 * scale, z, .21 * scale, .50 * scale, .21 * scale);
+    } else {
+      model(parent, "stone", color, x, .47 * scale, z, .31 * scale, .39 * scale, .29 * scale);
+      model(parent, "stone", color, x + .15 * scale, .39 * scale, z + .09 * scale, .20 * scale, .24 * scale, .18 * scale);
+    }
+  }
+  function terrain(island, index) {
+    const steps = 17;
+    const random = seededRandom(198 + index * 37);
+    const top = new THREE.Color(island.color).lerp(new THREE.Color("#ffffff"), .08);
+    const rim = new THREE.Color(island.color).multiplyScalar(.72);
+    const rock = new THREE.Color(island.rock);
+    const rings = [
+      [.001, .04, top], [.89, .015, top], [1.58, -.08, top], [1.80, -.27, rim],
+      [1.63, -.55, rock], [1.26, -.86, rock], [.88, -1.2, rock], [.40, -1.48, rock], [.001, -1.60, rock]
+    ];
+    const contour = Array.from({length: steps}, () => .93 + random() * .135);
+    const vertices = [];
+    const colors = [];
+    const indices = [];
+    rings.forEach(([radius, height, color], row) => {
+      for (let step = 0; step < steps; step += 1) {
+        const theta = step * Math.PI * 2 / steps + (row >= 4 ? row * .09 : .02);
+        const r = radius * contour[step];
+        vertices.push(Math.cos(theta) * r, height + (random() - .5) * .125 * Math.min(radius, 1), Math.sin(theta) * r * .91);
+        const shade = color.clone().multiplyScalar(.87 + random() * .23);
+        colors.push(shade.r, shade.g, shade.b);
+        if (row < rings.length - 1) {
+          const a = row * steps + step, b = row * steps + (step + 1) % steps;
+          indices.push(a, b, a + steps, b, b + steps, a + steps);
+        }
+      }
+    });
+    const shape = new THREE.BufferGeometry();
+    shape.setAttribute("position", new THREE.Float32BufferAttribute(vertices, 3));
+    shape.setAttribute("color", new THREE.Float32BufferAttribute(colors, 3));
+    shape.setIndex(indices);
+    shape.computeVertexNormals();
+    return new THREE.Mesh(shape, new THREE.MeshStandardMaterial({vertexColors: true, flatShading: true, roughness: .94}));
+  }
+  function cushion(parent, color, x, z, width, depth) {
+    model(parent, "ball", color, x, .040, z, width, .13, depth);
+  }
+  const ivory = "#fff3df", dark = "#51476d", glass = "#7ad0df";
+  const landmarks = [
+    (p) => {
+      cushion(p, "#fff0cf", -.08, .12, .84, .71);
+      model(p, "round", "#e7b68b", 0, .37, -.06, .25, .55, .25);
+      model(p, "cube", "#ffdb99", 0, .93, -.1, 1.46, .86, .66);
+      model(p, "cube", ivory, 0, 1.36, -.15, 1.49, .17, .70);
+      model(p, "cube", "#f1ad8e", -.44, 1.49, -.15, .44, .16, .34);
+      cylinderFront(p, dark, .04, .99, .31, .41, .24);
+      cylinderFront(p, "#9275a0", .04, .99, .444, .32, .07);
+      cylinderFront(p, glass, .04, .99, .49, .23, .03);
+      model(p, "ball", "#e6ffff", -.036, 1.07, .515, .07, .046, .018);
+      model(p, "cube", "#faf4e2", .55, 1.14, .247, .18, .15, .046);
+    },
+    (p) => {
+      cushion(p, "#f2e8ff", 0, .04, .93, .72);
+      model(p, "ball", "#9799d8", 0, .70, -.11, .88, .72, .59);
+      model(p, "ball", "#ded9ff", 0, .76, .153, .74, .61, .44);
+      model(p, "ball", "#505782", 0, .84, .493, .61, .265, .22);
+      [-.245, .245].forEach((x) => {
+        model(p, "ball", "#acebf5", x, .85, .70, .083, .107, .045);
+        model(p, "ball", "#f5b8dd", x * 1.48, .65, .608, .076, .041, .03);
+      });
+      model(p, "ball", "#fff1f8", 0, .55, .616, .078, .027, .027);
+      [-1, 1].forEach((sign) => {
+        model(p, "ball", "#aeb0ea", sign * .79, .85, .04, .18, .25, .22);
+        model(p, "gem", "#d9f6ff", sign * .96, 1.15, .09, .10, .16, .10);
+      });
+    },
+    (p) => {
+      cushion(p, "#ffe7b4", 0, .04, .90, .73);
+      const palette = new THREE.Group();
+      p.add(palette);
+      palette.position.set(-.24, .68, .07);
+      palette.rotation.set(.49, -.15, .23);
+      model(palette, "ball", "#ffdfb9", 0, 0, 0, .78, .52, .19);
+      ["#e48db0", "#d098df", "#91bcf0", "#7cc8b1", "#f5a66d"].forEach((color, i) => {
+        const theta = 2.15 + i * .66;
+        model(palette, "ball", color, Math.cos(theta) * .54, Math.sin(theta) * .33, .17, .14, .10, .055);
+      });
+      model(palette, "ball", "#c091ac", .36, -.09, .174, .13, .082, .025);
+      rod(p, "#f8c583", [.30, .17, .34], [.95, 1.51, .23], .075);
+      rod(p, "#f1e7f5", [.82, 1.24, .253], [.96, 1.52, .23], .092);
+      model(p, "gem", "#985f9a", .99, 1.62, .22, .14, .27, .12).rotation.z = -.44;
+      model(p, "gem", "#ffecb6", -.94, 1.48, .0, .12, .24, .11);
+    },
+    (p) => {
+      cushion(p, "#f5d5ef", 0, .03, .95, .76);
+      model(p, "round", "#9683ba", 0, .28, 0, .66, .33, .62);
+      model(p, "round", "#e0cbfb", 0, .45, 0, .71, .10, .66);
+      [-1, 1].forEach((sign) => {
+        model(p, "cube", "#ad86ce", sign * .41, .64, .08, .88, .16, .70).rotation.z = sign * .21;
+        model(p, "cube", ivory, sign * .40, .715, .08, .82, .13, .63).rotation.z = sign * .21;
+        for (let i = 0; i < 3; i += 1) {
+          model(p, "cube", "#bdaacb", sign * .41, .789, (i - 1) * .135 + .1, .51, .014, .014).rotation.z = sign * .21;
+        }
+      });
+      const crystal = model(p, "gem", "#edacf0", 0, 1.48, -.12, .34, .58, .33);
+      crystal.rotation.y = .31;
+      model(p, "gem", "#c3b2fd", -.61, 1.22, -.21, .14, .25, .13);
+      model(p, "gem", "#ffd8ad", .59, 1.25, .03, .12, .21, .11);
+    },
+    (p) => {
+      cushion(p, "#f5bcb0", 0, .07, 1.00, .76);
+      model(p, "cube", "#f1b78a", 0, .45, -.08, .72, .70, .57);
+      model(p, "ball", "#ffcf90", 0, 1.05, -.07, .83, .58, .53);
+      model(p, "ball", "#695779", 0, 1.065, .34, .64, .37, .25);
+      [-1, 1].forEach((sign) => {
+        model(p, "ball", "#fff3b6", sign * .23, 1.10, .567, .090, .103, .028);
+        cylinderFront(p, "#f1a3b1", sign * .76, .99, -.02, .21, .27);
+        model(p, "ball", "#ed9daf", sign * .51, .41, .0, .22, .26, .19);
+        model(p, "ball", "#8e7690", sign * .32, .23, .23, .25, .13, .29);
+      });
+      model(p, "ball", "#f5aeba", 0, .94, .564, .099, .033, .028);
+      rod(p, dark, [0, 1.49, -.1], [.13, 1.84, -.11], .042);
+      model(p, "ball", "#ffb2bf", .14, 1.89, -.11, .126, .126, .126);
+    },
+    (p) => {
+      cushion(p, "#e5f9df", 0, .03, .93, .73);
+      model(p, "round", "#8fadd1", 0, .17, -.05, .60, .22, .60);
+      model(p, "round", "#d3eefa", 0, .40, -.05, .34, .41, .34);
+      const dish = new THREE.Group();
+      p.add(dish);
+      dish.position.set(0, .91, -.10);
+      dish.rotation.set(.47, .4, -.48);
+      const profile = [
+        new THREE.Vector2(.001, -.082), new THREE.Vector2(.30, -.037),
+        new THREE.Vector2(.52, .054), new THREE.Vector2(.71, .197),
+        new THREE.Vector2(.74, .216), new THREE.Vector2(.74, .252),
+        new THREE.Vector2(.69, .26), new THREE.Vector2(.49, .132),
+        new THREE.Vector2(.28, .043), new THREE.Vector2(.001, .011)
+      ];
+      const reflector = new THREE.Mesh(new THREE.LatheGeometry(profile, 24), new THREE.MeshStandardMaterial({
+        color: "#b1d8fa", roughness: .65, side: THREE.DoubleSide
+      }));
+      dish.add(reflector);
+      const rim = new THREE.Mesh(new THREE.TorusGeometry(.72, .034, 8, 32), material("#f2e7fd"));
+      rim.rotation.x = Math.PI / 2;
+      rim.position.y = .241;
+      dish.add(rim);
+      rod(dish, "#9386bd", [0, .02, 0], [0, .58, 0], .043);
+      model(dish, "ball", "#f5b8db", 0, .61, 0, .14, .14, .14);
+      model(p, "gem", "#c7b4fb", -.91, 1.23, -.40, .13, .25, .12);
+      model(p, "gem", "#ffeeaf", 1.03, 1.61, -.40, .12, .22, .12);
+    }
+  ];
+
+  const islands3D = islands.map((island, index) => {
+    const group = new THREE.Group();
+    group.position.set(island.position[0], 0, island.position[1]);
+    scene.add(group);
+    group.add(terrain(island, index));
+    const props = new THREE.Group();
+    props.rotation.y = [.16, -.18, -.21, .19, -.10, .13][index];
+    group.add(props);
+    landmarks[index](props);
+    const flora = ["#6eb696", "#8ca4dc", "#dd94c2", "#b49cdb", "#eda996", "#72bfbd"][index];
+    tree(group, -1.20, -.17, .87, flora, index === 1 || index === 5);
+    tree(group, 1.13, -.37, .72, flora, index === 0 || index === 3);
+    tree(group, -.86, -.99, .58, island.trim, index === 0);
+    const random = seededRandom(818 + index * 55);
+    for (let i = 0; i < 14; i += 1) {
+      const theta = random() * Math.PI * 2;
+      const distance = 1.13 + random() * .4;
+      const size = .045 + random() * .13;
+      const x = Math.cos(theta) * distance;
+      const z = Math.sin(theta) * distance * .83;
+      model(group, i % 3 ? "stone" : "gem", i % 3 ? island.trim : "#fffae9",
+        x, .012 + size * .34, z, size, size * .68, size * .79).rotation.y = theta;
+    }
+    const hit = new THREE.Mesh(geometry.ball);
+    hit.position.y = .10;
+    hit.scale.set(1.78, 1.61, 1.64);
+    hit.visible = false;
+    hit.userData.index = index;
+    group.add(hit);
+
+    const glow = new THREE.Mesh(
+      new THREE.TorusGeometry(1.97, .022, 8, 52),
+      new THREE.MeshBasicMaterial({color: island.trim, transparent: true, opacity: .82})
+    );
+    glow.rotation.x = Math.PI / 2;
+    glow.position.y = -.33;
+    glow.visible = false;
+    group.add(glow);
+    return {group, hit, glow};
+  });
+
+  return islands3D;
+}
+function addAtmosphere(THREE, scene) {
+  const ambient = new THREE.Group();
+  scene.add(ambient);
+  const draw = document.createElement("canvas");
+  draw.width = 256;
+  draw.height = 128;
+  const brush = draw.getContext("2d");
+  brush.scale(1, .5);
+  const mist = brush.createRadialGradient(128, 128, 9, 128, 128, 126);
+  mist.addColorStop(0, "rgba(238,230,255,.48)");
+  mist.addColorStop(.48, "rgba(214,217,255,.20)");
+  mist.addColorStop(1, "rgba(228,224,255,0)");
+  brush.fillStyle = mist;
+  brush.fillRect(0, 0, 256, 256);
+  const mistMap = new THREE.CanvasTexture(draw);
+  mistMap.colorSpace = THREE.SRGBColorSpace;
+  const clouds = [
+    [-9, -2.8, -5, 6, 1.57], [7.2, -3.4, -6, 7, 1.95],
+    [-7.3, -2.9, 5.6, 6, 1.4], [3.4, -2.8, 2.2, 7, 1.45], [1.5, -2.9, -4.6, 7, 1.2]
+  ].map(([x, y, z, w, h], i) => {
+    const cloud = new THREE.Sprite(new THREE.SpriteMaterial({
+      map: mistMap, transparent: true, depthWrite: false, opacity: .91,
+      rotation: [.12, -.12, .02, .14, -.09][i]
+    }));
+    cloud.position.set(x, y, z);
+    cloud.scale.set(w, h, 1);
+    ambient.add(cloud);
+    return {cloud, x, z};
+  });
+
+  const route = [0, 1, 2, 5, 4, 3].map((index) => {
+    const [x, z] = islands[index].position;
+    return new THREE.Vector3(x, -1.13, z);
+  });
+  const path = new THREE.CatmullRomCurve3(route, true, "catmullrom", .31);
+  const line = new THREE.Line(
+    new THREE.BufferGeometry().setFromPoints(path.getPoints(150)),
+    new THREE.LineDashedMaterial({color: "#e5dbff", transparent: true, opacity: .49, dashSize: .068, gapSize: .14, depthWrite: false})
+  );
+  line.computeLineDistances();
+  ambient.add(line);
+
+  const arcMaterial = new THREE.LineBasicMaterial({color: "#ccd6ff", transparent: true, opacity: .19, depthWrite: false});
+  [5.5, 7.2, 9.3].forEach((radius, i) => {
+    const arc = new THREE.EllipseCurve(0, 0, radius, radius * .67, -.3 + i * .3, Math.PI * (1.62 + i * .06), false, -.12);
+    const points = arc.getPoints(100).map((point) => new THREE.Vector3(point.x, -1.75 - i * .1, point.y));
+    ambient.add(new THREE.Line(new THREE.BufferGeometry().setFromPoints(points), arcMaterial));
+  });
+  return {ambient, clouds, line};
+}
+
+// A constrained orthographic orbit keeps the view legible at all zoom levels.
+function setupMap(THREE) {
+  const surface = byId("map-canvas");
+  const renderer = new THREE.WebGLRenderer({alpha: true, antialias: true, powerPreference: "low-power"});
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.65));
+  renderer.setClearColor(0x000000, 0);
+  renderer.outputColorSpace = THREE.SRGBColorSpace;
+  surface.append(renderer.domElement);
+  const scene = new THREE.Scene();
+  const camera = new THREE.OrthographicCamera(-10, 10, 7, -7, .1, 70);
+  const world = buildLandscape(THREE, scene);
+  const atmosphere = addAtmosphere(THREE, scene);
+  scene.add(new THREE.HemisphereLight("#fff5ea", "#bcb3e6", 2.12));
+  const keyLight = new THREE.DirectionalLight("#fff0d8", 2.07);
+  keyLight.position.set(-4, 7, 5);
+  scene.add(keyLight);
+  const rimLight = new THREE.DirectionalLight("#c5d9ff", 1.02);
+  rimLight.position.set(5, 3, -5);
+  scene.add(rimLight);
+
+  const target = new THREE.Vector3(0, .24, 0);
+  const targetGoal = target.clone();
+  const angles = {azimuth: 0, tilt: .89, zoom: 1};
+  const goals = {...angles};
+  const clamp = THREE.MathUtils.clamp;
+  const spherical = new THREE.Spherical();
+  const projection = new THREE.Vector3();
+  const point = new THREE.Vector2();
+  const raycaster = new THREE.Raycaster();
+  const hittable = world.map(({hit}) => hit);
+  const pointers = new Map();
+  let width = 1, height = 1;
+  let frame = 0;
+  let previous = 0;
+  let elapsed = 0;
+  let selected = -1;
+  let hovered = -1;
+  let focused = -1;
+  let dragged = false;
+  let downAt;
+  let unavailable = false;
+  let overviewHeight = 14;
+  let focusedHeight = 6.8;
+  let viewHeight = 0;
+  let radiusGoal = overviewHeight;
+  const stars = byId("stars");
+  const zoomOut = byId("zoom-out"), zoomIn = byId("zoom-in");
+
+  function updateSize() {
+    const bounds = surface.getBoundingClientRect();
+    if (!bounds.width || !bounds.height) return;
+    width = bounds.width;
+    height = bounds.height;
+    const aspect = width / height;
+    overviewHeight = Math.max(14.25, 20 / aspect);
+    focusedHeight = Math.max(5.55, 6.35 / aspect);
+    radiusGoal = selected < 0 ? overviewHeight : focusedHeight;
+    if (!viewHeight) viewHeight = radiusGoal;
+    renderer.setSize(width, height, false);
+    refresh();
+  }
+
+  function projectLabels() {
+    world.forEach(({group}, index) => {
+      const button = pinButtons[index];
+      projection.set(group.position.x, group.position.y + (index === 3 ? 2.29 : 2.23), group.position.z);
+      projection.project(camera);
+      const px = (projection.x + 1) * width / 2;
+      const py = (1 - projection.y) * height / 2;
+      const show = (selected < 0 || selected === index) && px > 10 && px < width - 10 && py > 4 && py < height - 45;
+      if (!show && document.activeElement === button && selected < 0) return;
+      button.hidden = !show;
+      if (show) {
+        const halfWidth = button.offsetWidth / 2;
+        button.style.transform = "translate(" + Math.round(clamp(px, halfWidth + 7, width - halfWidth - 7) - halfWidth) +
+          "px, " + Math.round(Math.max(48, py - 26)) + "px)";
+      }
+    });
+  }
+
+  function render(now) {
+    frame = 0;
+    if (unavailable || textMode || !width || document.hidden) return;
+    const dt = previous ? Math.min((now - previous) / 1000, .15) : 1 / 60;
+    previous = now;
+    if (!low) elapsed += dt;
+    const ease = low ? 1 : 1 - Math.exp(-dt * 6.3);
+    angles.azimuth += (goals.azimuth - angles.azimuth) * ease;
+    angles.tilt += (goals.tilt - angles.tilt) * ease;
+    angles.zoom += (goals.zoom - angles.zoom) * ease;
+    viewHeight += (radiusGoal - viewHeight) * ease;
+    target.lerp(targetGoal, ease);
+    spherical.set(29, angles.tilt, angles.azimuth);
+    camera.position.setFromSpherical(spherical).add(target);
+    camera.lookAt(target);
+    const half = viewHeight * angles.zoom / 2;
+    camera.left = -half * width / height;
+    camera.right = -camera.left;
+    camera.top = half;
+    camera.bottom = -half;
+    camera.updateProjectionMatrix();
+    camera.updateMatrixWorld();
+    world.forEach(({group, glow}, index) => {
+      group.position.y = low ? 0 : .105 * Math.sin(elapsed * .68 + index * 1.33);
+      glow.visible = !low && (index === hovered || index === focused || index === selected);
+    });
+    atmosphere.ambient.visible = !low;
+    atmosphere.line.visible = selected < 0;
+    if (!low) {
+      stars.style.transform = "translate(" + (Math.sin(elapsed * .11) * 4) + "px," + (Math.cos(elapsed * .10) * 3) + "px)";
+      atmosphere.clouds.forEach(({cloud, x, z}, index) => {
+        cloud.position.x = x + .48 * Math.sin(elapsed * .19 + index);
+        cloud.position.z = z + .20 * Math.cos(elapsed * .23 + index);
+      });
+    }
+    renderer.render(scene, camera);
+    projectLabels();
+    if (!low) frame = requestAnimationFrame(render);
+  }
+
+  function refresh() {
+    if (!frame && !unavailable && !textMode && !document.hidden) {
+      previous = 0;
+      frame = requestAnimationFrame(render);
+    }
+  }
+  function syncZoomButtons() {
+    zoomIn.disabled = goals.zoom <= .70;
+    zoomOut.disabled = goals.zoom >= 1.36;
+  }
+  function zoom(factor) {
+    goals.zoom = clamp(goals.zoom * factor, .70, 1.36);
+    syncZoomButtons();
+    refresh();
+  }
+  function goTo(index) {
+    selected = index;
+    const island = islands[index];
+    if (island) {
+      targetGoal.set(island.position[0], .34, island.position[1]);
+      goals.azimuth = .13;
+      goals.tilt = .99;
+    } else {
+      targetGoal.set(0, .24, 0);
+      goals.azimuth = 0;
+      goals.tilt = .89;
+    }
+    radiusGoal = island ? focusedHeight : overviewHeight;
+    goals.zoom = 1;
+    syncZoomButtons();
+    refresh();
+  }
+  function hover(index) {
+    hovered = index;
+    surface.classList.toggle("pointing", index !== -1);
+    refresh();
+  }
+  function highlight(index) {
+    focused = index;
+    refresh();
+  }
+  function pick(event) {
+    const bounds = surface.getBoundingClientRect();
+    point.set((event.clientX - bounds.left) / width * 2 - 1, 1 - (event.clientY - bounds.top) / height * 2);
+    raycaster.setFromCamera(point, camera);
+    return raycaster.intersectObjects(hittable, false)[0]?.object.userData.index ?? -1;
+  }
+  function fingerGap() {
+    const [a, b] = [...pointers.values()];
+    return Math.hypot(a.x - b.x, a.y - b.y);
+  }
+
+  surface.addEventListener("pointerdown", (event) => {
+    if (event.button !== 0 || pointers.size >= 2) return;
+    surface.setPointerCapture(event.pointerId);
+    const point = {x: event.clientX, y: event.clientY};
+    if (!pointers.size) {
+      dragged = false;
+      downAt = point;
+    } else {
+      dragged = true;
+    }
+    pointers.set(event.pointerId, point);
+  });
+  surface.addEventListener("pointermove", (event) => {
+    const prior = pointers.get(event.pointerId);
+    if (!prior) {
+      if (!pointers.size && event.pointerType === "mouse") hover(pick(event));
+      return;
+    }
+    const gap = pointers.size === 2 ? fingerGap() : 0;
+    pointers.set(event.pointerId, {x: event.clientX, y: event.clientY});
+    if (gap > 0) {
+      zoom(gap / Math.max(fingerGap(), 1));
+      return;
+    }
+    if (!dragged && Math.hypot(event.clientX - downAt.x, event.clientY - downAt.y) < 5) return;
+    dragged = true;
+    hover(-1);
+    surface.classList.add("dragging");
+    goals.azimuth = clamp(goals.azimuth - (event.clientX - prior.x) * .005, -1.27, 1.27);
+    goals.tilt = clamp(goals.tilt - (event.clientY - prior.y) * .005, .52, 1.19);
+    refresh();
+  });
+  function endPointer(event) {
+    if (!pointers.has(event.pointerId)) return;
+    pointers.delete(event.pointerId);
+    if (pointers.size) return;
+    surface.classList.remove("dragging");
+    if (event.type !== "pointerup" || dragged) return;
+    const index = pick(event);
+    if (index >= 0) chooseIsland(index, pinButtons[index]);
+  }
+  surface.addEventListener("pointerup", endPointer);
+  surface.addEventListener("pointercancel", endPointer);
+  surface.addEventListener("lostpointercapture", endPointer);
+  surface.addEventListener("pointerleave", () => hover(-1));
+  surface.addEventListener("wheel", (event) => {
+    event.preventDefault();
+    zoom(Math.exp(clamp(event.deltaY * (event.deltaMode === 1 ? 14 : 1), -180, 180) * .0014));
+  }, {passive: false});
+  if (matchMedia("(pointer: coarse)").matches) {
+    byId("map-hint").querySelector("span").textContent = "Drag to rotate, pinch to zoom, tap an island to explore.";
+  }
+  const resizeObserver = new ResizeObserver(updateSize);
+  resizeObserver.observe(surface);
+  document.addEventListener("visibilitychange", refresh);
+  renderer.domElement.addEventListener("webglcontextlost", (event) => {
+    event.preventDefault();
+    unavailable = true;
+    cancelAnimationFrame(frame);
+    resizeObserver.disconnect();
+    showFallback();
+  });
+  updateSize();
+  return {goTo, zoom, hover, highlight, refresh};
+}
+
+function showFallback() {
+  unavailable = true;
+  setTextMode(true, "The 3D map is unavailable in this browser. Choose an island below to open its lessons and activity.", false);
+}
+
+function loadScript(url) {
+  return new Promise((resolve, reject) => {
+    const script = make("script");
+    const timeout = setTimeout(() => {
+      script.remove();
+      reject(new Error("The 3D library did not finish loading."));
+    }, 4500);
+    script.src = url;
+    script.onload = () => { clearTimeout(timeout); resolve(); };
+    script.onerror = () => { clearTimeout(timeout); script.remove(); reject(new Error("The 3D library could not load.")); };
+    document.head.append(script);
+  });
+}
+
+async function launchMap() {
+  const sources = [
+    "https://cdnjs.cloudflare.com/ajax/libs/three.js/0.160.0/three.min.js",
+    "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.min.js"
+  ];
+  try {
+    for (const source of sources) {
+      try {
+        await loadScript(source);
+        if (window.THREE) break;
+      } catch { /* Try the alternate CDN before showing the text-only guide. */ }
+    }
+    if (!window.THREE) throw new Error("The 3D library is unavailable.");
+    scatterStars();
+    sceneView = setupMap(window.THREE);
+    if (current >= 0) sceneView.goTo(current);
+  } catch {
+    showFallback();
+  }
+}
+
+launchMap();
+</script>
+</body>
+</html>
