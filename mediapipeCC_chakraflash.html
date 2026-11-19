@@ -1,0 +1,482 @@
+<!doctype html>
+<html lang="en" data-theme="shinobi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#10131c">
+<title>Chakra Clash · Jutsu Lab</title>
+<style>
+:root{color-scheme:dark;--bg:#10131c;--panel:#181d29;--line:#30394b;--ink:#f6f2ec;--muted:#a7b0c2;--accent:#ffb16d;--blue:#79ccff;--halo:#49352e}
+[data-theme=classic]{--accent:#95e6c8;--halo:#24433f}
+*{box-sizing:border-box}
+body{margin:0;background:radial-gradient(ellipse at 85% 0,#22243a,transparent 55%),var(--bg);color:var(--ink);font:15px/1.5 Inter,ui-sans-serif,system-ui,sans-serif}
+button,input{font:inherit}
+button{cursor:pointer;color:var(--ink);border:1px solid var(--line);border-radius:9px;background:#ffffff05;padding:9px 13px;font-weight:650}
+button:disabled{opacity:.35;cursor:default}
+button:focus-visible,input:focus-visible,summary:focus-visible,#arena:focus-visible{outline:2px solid var(--accent);outline-offset:4px}
+button:hover:enabled{border-color:var(--accent);background:#ffffff09}
+button[aria-pressed=true]{border-color:var(--accent);color:var(--accent);background:#ffb16d0c}
+main{width:min(1240px,calc(100% - 48px));margin:30px auto}
+header,.row,.section-head{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.eyebrow{font-size:11px;color:var(--accent);letter-spacing:.2em;font-weight:750;text-transform:uppercase}
+h1{font-size:clamp(30px,5vw,54px);letter-spacing:-.055em;line-height:1.08;margin:7px 0 10px;font-weight:850}
+p,h2{margin:0}
+h2{font-size:16px}
+small,.muted{color:var(--muted)}
+.subhead{color:var(--muted);max-width:680px}
+nav{display:flex;gap:8px;flex-wrap:wrap;margin:23px 0 18px}
+.badge{color:var(--muted);font-size:11px;letter-spacing:.08em;display:inline-flex;align-items:center;gap:7px}
+.dot{width:7px;height:7px;border-radius:50%;background:var(--accent);box-shadow:0 0 12px var(--accent)}
+.layout{display:grid;grid-template-columns:minmax(0,1fr) 320px;gap:16px}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:16px;overflow:hidden}
+.arena-panel{padding:18px}
+.arena{height:350px;position:relative;overflow:hidden;border-radius:11px;background:radial-gradient(ellipse at center,#172d46,#101723 65%);border:1px solid #26364c}
+.arena:before{content:"";position:absolute;inset:0;background-image:linear-gradient(#8bb4ff06 1px,transparent 1px),linear-gradient(90deg,#8bb4ff06 1px,transparent 1px);background-size:36px 36px;pointer-events:none}
+.arena canvas{position:absolute;inset:0;width:100%;height:100%}
+.arena-caption{position:absolute;left:16px;top:14px;z-index:1}
+.arena-caption small{display:block;font-size:10px;letter-spacing:.16em}
+.arena-caption strong{color:#bfe7ff;font-size:14px}
+.arena-bottom{position:absolute;left:16px;right:16px;bottom:14px;display:flex;justify-content:space-between;align-items:end;gap:12px;pointer-events:none}
+#technique{font-size:25px;font-weight:800;letter-spacing:-.035em}
+#techniqueNote{font-size:12px;color:#a2bdd5}
+#energyBadge{border:1px solid #658aa34d;padding:5px 8px;border-radius:6px;font-size:11px;color:#bfe7ff;white-space:nowrap}
+.arena-top{margin-bottom:12px;min-height:31px}
+#score{font-weight:750;color:var(--accent)}
+#matchInfo[hidden],#practiceInfo[hidden]{display:none}
+#matchInfo{display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+#round{font-size:12px;color:var(--muted)}
+#reset{padding:5px 9px;font-size:12px}
+#reveal{font-size:25px;font-weight:800;position:absolute;right:16px;top:12px;z-index:1}
+.result-block{margin-top:14px;min-height:54px}
+#result{font-size:16px}
+#detail{font-size:12px;color:var(--muted);margin-top:4px}
+.telemetry{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px;margin-top:17px;padding-top:15px;border-top:1px solid var(--line)}
+.metric-label{display:flex;justify-content:space-between;gap:4px;flex-wrap:wrap;font-size:11px;color:var(--muted)}
+.metric-label b{color:var(--ink);font-variant-numeric:tabular-nums}
+.bar{margin-top:7px;height:4px;background:#ffffff10;border-radius:5px;overflow:hidden}
+.bar i{display:block;height:100%;width:0;background:var(--blue);border-radius:5px}
+.metric:last-child .bar i{background:var(--accent)}
+.camera-panel{padding:18px;display:flex;flex-direction:column;gap:13px}
+#camera{width:100%;background:var(--accent);color:#111824;border:0;padding:11px}
+#preview{aspect-ratio:4/3;position:relative;background:#10141e;border-radius:10px;overflow:hidden;border:1px solid var(--line)}
+#video,#overlay{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;transform:scaleX(-1)}
+#emptyCamera{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;color:var(--muted);font-size:12px;text-align:center}
+#emptyCamera span{font-size:28px;opacity:.65}
+#trackingState{font-size:12px;color:var(--blue)}
+progress{height:5px;width:100%;accent-color:var(--accent)}
+#hint{font-size:12px;color:var(--muted);min-height:36px;line-height:1.6}
+#cameraState{font-size:10px;letter-spacing:.08em;color:var(--muted)}
+.camera-note{border-top:1px solid var(--line);padding-top:12px;font-size:11px;color:var(--muted);margin-top:auto}
+.section-head{margin:24px 0 11px}
+.section-head h2{font-size:16px}
+.section-head small{font-size:11px}
+.moves{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.move{display:flex;align-items:center;gap:13px;text-align:left;padding:14px 16px;background:var(--panel);border-radius:12px;min-width:0}
+.move .icon{font-size:27px;width:36px;flex-shrink:0;text-align:center}
+.move .copy{min-width:0;flex:1}
+.move strong{font-size:13px;display:block}
+.move small{font-size:11px;display:block;margin-top:3px;font-weight:400}
+.key{display:inline-grid;place-items:center;border:1px solid var(--line);border-radius:4px;width:20px;height:23px;font-size:10px;color:var(--muted);flex-shrink:0}
+.seal{grid-column:1/-1;background:linear-gradient(100deg,#282139,var(--panel));min-height:65px}
+.seal .icon{width:65px;white-space:nowrap;font-size:24px}
+.seal strong{color:#d5b7ff}
+.seal-tag{color:#bda1e4;font-size:10px;letter-spacing:.08em}
+.bottom{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:17px}
+details{border:1px solid var(--line);border-radius:12px;padding:13px 16px;background:#ffffff02}
+summary{cursor:pointer;font-size:12px;font-weight:600;color:var(--muted)}
+details p,details li{font-size:12px;color:var(--muted);line-height:1.7}
+details p{margin-top:12px}
+details ul{padding-left:18px;margin-bottom:0}
+label{display:block;font-size:12px;color:var(--muted);margin-top:13px}
+input[type=range]{width:100%;accent-color:var(--accent);margin:6px 0}
+label span{float:right;color:var(--ink)}
+footer a{color:var(--accent);text-underline-offset:3px}
+footer{margin:22px 0;font-size:10px;letter-spacing:.04em;color:#8590a6;display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.reduced-note{font-size:10px;color:var(--muted)}
+.training-panel{border-top:1px solid var(--line);margin-top:18px;padding-top:15px}
+.training-panel h3{font-size:13px;margin:0}
+.drill-stats{font-size:11px;color:var(--muted)}
+.drill-stats b{color:var(--accent)}
+.training-controls{display:flex;flex-wrap:wrap;gap:7px;margin-top:10px}
+.training-controls button{font-size:11px;padding:7px 10px}
+.training-panel p{font-size:11px;color:var(--muted);min-height:32px;margin:5px 0 0}
+#charge{display:block;margin-top:7px;accent-color:var(--blue)}
+.seal-guide{margin-top:16px}
+.guide-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px;margin-top:15px}
+.guide-grid svg{width:58px;height:75px;display:block;margin-bottom:8px;fill:#79ccff0b;stroke:#9edbff;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.guide-grid strong{font-size:12px;color:var(--accent)}
+.guide-grid p{margin-top:5px}
+.training-on{cursor:crosshair}
+@media(max-width:900px){
+.layout{grid-template-columns:minmax(0,1fr) 270px}
+.moves{grid-template-columns:repeat(2,minmax(0,1fr))}
+.move{padding:12px}
+.arena{height:340px}
+}
+@media(max-width:680px){
+main{width:calc(100% - 28px);margin:20px auto}
+.layout{grid-template-columns:1fr}
+.arena{height:310px}
+.camera-panel{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:12px}
+.camera-panel>.row,.camera-panel>.camera-note,.camera-panel>.sensitivity{grid-column:1/-1}
+#preview{grid-row:2/6}
+#camera{align-self:start}
+.camera-panel progress{align-self:center}
+#hint{grid-column:1/-1;min-height:0}
+.bottom{grid-template-columns:1fr}
+.telemetry{gap:10px}
+.moves{gap:8px}
+.move{padding:12px 9px;gap:7px}
+.move .icon{width:27px;font-size:23px}
+.move strong{font-size:12px}
+.move small{font-size:10px}
+.move .key{display:none}
+.seal-tag{font-size:9px}
+.seal .icon{width:56px;font-size:21px}
+#technique{font-size:23px}
+.arena-panel{padding:12px}
+.section-head small{max-width:180px;text-align:right}
+#energyBadge{font-size:10px}
+.guide-grid{grid-template-columns:1fr}
+.guide-grid>div{display:grid;grid-template-columns:60px 1fr;column-gap:12px}
+.guide-grid svg{grid-row:1/3}
+.training-panel .row{gap:6px;flex-wrap:wrap}
+}
+@media(prefers-reduced-motion:reduce){
+*,*:before,*:after{animation:none!important;scroll-behavior:auto!important}
+}
+</style>
+</head>
+<body>
+<main>
+<header>
+<div>
+<div class="eyebrow">Shinobi training lab / 01</div>
+<h1 id="title">Chakra Clash</h1>
+</div>
+<button id="theme" type="button">Classic mode</button>
+</header>
+<p class="subhead">Your hands. Your chakra. Shape the energy with every move.</p>
+
+<nav aria-label="Play mode">
+<button id="practice" aria-pressed="true" type="button">Jutsu practice</button>
+<button id="match" aria-pressed="false" type="button">Match · first to 3</button>
+</nav>
+
+<div class="layout">
+<section class="panel arena-panel" aria-label="Chakra arena">
+<div class="row arena-top">
+<div id="practiceInfo" class="badge"><i class="dot"></i> FREE PRACTICE</div>
+<div id="matchInfo" hidden>
+<span id="score">You 0 · CPU 0</span>
+<span id="round">Round 1</span>
+<button id="reset" type="button">New match</button>
+</div>
+<span class="badge" id="inputSource">MANUAL INPUT</span>
+</div>
+
+<div class="arena" id="arena" tabindex="0" aria-label="Jutsu arena. In target training, arrow keys aim and Space casts.">
+<canvas id="particles" aria-hidden="true"></canvas>
+<div class="arena-caption">
+<small>CHAKRA SIGNATURE</small>
+<strong id="element">UNBOUND / PARTICLE FIELD</strong>
+</div>
+<span id="reveal" aria-hidden="true" hidden>◌ VS ◌</span>
+<div class="arena-bottom">
+<div>
+<div id="technique">Chakra dispersed</div>
+<p id="techniqueNote">Hold a hand sign to gather the dots.</p>
+</div>
+<span id="energyBadge">CHAKRA <b id="energyValue">0%</b></span>
+</div>
+</div>
+
+<div style="display:flex;align-items:center;gap:10px;margin-top:9px;font-size:10px;color:var(--muted)">
+<span id="visualStatus" role="status">Starting effects…</span>
+<button id="retryVisuals" type="button" hidden style="font-size:10px;padding:3px 7px">Retry enhanced effects</button>
+</div>
+
+<div class="result-block" role="status" aria-atomic="true">
+<strong id="result">Build your chakra</strong>
+<p id="detail">Start the camera or choose a technique below. Keys 1–9 work too.</p>
+</div>
+
+<div class="telemetry" aria-label="Live chakra readings">
+<div class="metric">
+<div class="metric-label">Openness <b id="openValue">50%</b></div>
+<div class="bar"><i id="openBar"></i></div>
+</div>
+<div class="metric">
+<div class="metric-label">Speed <b id="speedValue">0%</b></div>
+<div class="bar"><i id="speedBar"></i></div>
+</div>
+<div class="metric">
+<div class="metric-label">Closeness <b id="nearValue">40%</b></div>
+<div class="bar"><i id="nearBar"></i></div>
+</div>
+<div class="metric">
+<div class="metric-label">Intensity <b id="intensityValue">0%</b></div>
+<div class="bar"><i id="intensityBar"></i></div>
+</div>
+</div>
+
+<div class="training-panel">
+<div class="row">
+<h3>Chakra target training</h3>
+<span class="drill-stats">Score <b id="drillScore">0</b> · Combo <b id="combo">0</b></span>
+</div>
+<div class="training-controls">
+<button id="training" type="button" aria-pressed="false">Training targets</button>
+<button id="cast" type="button" disabled>Cast / Space</button>
+<button id="resetDrill" type="button">Reset drill</button>
+</div>
+<label for="charge">Jutsu charge <span id="chargeValue">0%</span></label>
+<progress id="charge" max="100" value="0"></progress>
+<p id="drillMessage" role="status">Enable targets, hold a sign to charge, then aim with hand, pointer or arrow keys. Space or tap casts. Available in practice.</p>
+</div>
+</section>
+
+<section class="panel camera-panel" aria-label="Camera controls">
+<div class="row">
+<h2>Hand tracking</h2>
+<span id="cameraState">OFFLINE</span>
+</div>
+<div id="preview">
+<video id="video" autoplay playsinline muted></video>
+<canvas id="overlay" aria-hidden="true"></canvas>
+<div id="emptyCamera"><span aria-hidden="true">◎</span>Camera is off<br>Your chakra is ready.</div>
+</div>
+<button id="camera" type="button">Start camera</button>
+<div id="trackingState">Manual practice available</div>
+<progress id="hold" max="100" value="0" aria-label="Gesture hold"></progress>
+<p id="hint">Show your whole hand, palm toward the camera. Practice signs activate in 0.2 seconds. Match moves need 0.6 seconds.</p>
+<div class="sensitivity">
+<label for="sensitivity">Response sensitivity <span id="sensitivityValue">1.4×</span></label>
+<input id="sensitivity" type="range" min="0.6" max="2.4" step="0.1" value="1.4">
+</div>
+<p class="camera-note">Move your hand to guide the chakra. Small movements stir the flow; fast movements stretch the trails. Adjust sensitivity for your camera.</p>
+</section>
+</div>
+
+<div class="section-head">
+<h2>Choose your technique</h2>
+<small id="legendHint">8 one-hand poses + a two-hand seal</small>
+</div>
+
+<div class="moves" id="moves">
+<button type="button" class="move" data-gesture="fist" aria-pressed="false">
+<span class="icon">✊</span>
+<span class="copy"><strong>Rasengan</strong><small>Closed fist · Rock in match</small></span>
+<span class="key">1</span>
+</button>
+<button type="button" class="move" data-gesture="palm" aria-pressed="false">
+<span class="icon">✋</span>
+<span class="copy"><strong>Wind Release</strong><small>Open palm · Paper in match</small></span>
+<span class="key">2</span>
+</button>
+<button type="button" class="move" data-gesture="victory" aria-pressed="false">
+<span class="icon">✌️</span>
+<span class="copy"><strong>Chidori</strong><small>Two-finger V · Scissors in match</small></span>
+<span class="key">3</span>
+</button>
+<button type="button" class="move" data-gesture="point" aria-pressed="false">
+<span class="icon">☝️</span>
+<span class="copy"><strong>Fireball</strong><small>Index up · Other fingers folded</small></span>
+<span class="key">4</span>
+</button>
+<button type="button" class="move" data-gesture="pinch" aria-pressed="false">
+<span class="icon">👌</span>
+<span class="copy"><strong>Amaterasu</strong><small>Thumb + index touch · Others up</small></span>
+<span class="key">5</span>
+</button>
+<button type="button" class="move" data-gesture="horns" aria-pressed="false">
+<span class="icon">🤘</span>
+<span class="copy"><strong>Chakra Cloak</strong><small>Ox-inspired half-seal · Index + little finger up</small></span>
+<span class="key">6</span>
+</button>
+<button type="button" class="move" data-gesture="tiger" aria-pressed="false">
+<span class="icon">寅</span>
+<span class="copy"><strong>Great Fireball</strong><small>Tiger half-seal · Index + middle together</small></span>
+<span class="key">8</span>
+</button>
+<button type="button" class="move" data-gesture="dragon" aria-pressed="false">
+<span class="icon">辰</span>
+<span class="copy"><strong>Water Dragon</strong><small>Dragon half-seal · Thumb + little finger up</small></span>
+<span class="key">9</span>
+</button>
+<button type="button" class="move seal" data-gesture="clone" aria-pressed="false">
+<span class="icon">✌️✌️</span>
+<span class="copy"><strong>Shadow Clone</strong><small>Two V signs held near each other · Keep both palms visible</small></span>
+<span class="seal-tag">TWO-HAND SEAL</span>
+<span class="key">7</span>
+</button>
+</div>
+
+<details class="seal-guide">
+<summary>One-hand sign guide &amp; story notes</summary>
+<div class="guide-grid">
+<div>
+<svg viewBox="0 0 60 75" aria-hidden="true">
+<path d="M18 70V52C10 46 7 39 10 36Q14 33 22 43V12Q22 6 27 9V35L29 8Q31 3 35 9L34 40Q39 32 43 37L48 48Q49 55 42 62V70"/>
+<path d="M23 42Q32 38 38 47M27 12L29 35"/>
+</svg>
+<strong>Tiger-inspired half-seal</strong>
+<p>Index and middle finger upright and touching; fold ring and little finger. A sword-finger / confrontation-style pose. Great Fireball in this game.</p>
+</div>
+<div>
+<svg viewBox="0 0 60 75" aria-hidden="true">
+<path d="M17 70V57L5 39Q3 34 8 32L23 43L22 31Q22 26 28 28L33 33Q37 28 41 33L44 38L48 12Q49 6 54 10L53 44Q53 55 44 63V70"/>
+<path d="M24 45Q33 38 43 44M28 30L30 40M36 33L36 41"/>
+</svg>
+<strong>Dragon-inspired half-seal</strong>
+<p>Extend thumb and little finger. Fold index, middle and ring finger. Keep the thumb clearly separated. Water Dragon in this game.</p>
+</div>
+<div>
+<svg viewBox="0 0 60 75" aria-hidden="true">
+<path d="M18 70V55Q9 46 13 39L23 43V11Q24 5 29 10V37Q34 31 38 36L42 40L47 12Q49 6 54 11L52 45Q53 56 43 64V70"/>
+<path d="M24 44Q35 38 43 46M29 37L30 45"/>
+</svg>
+<strong>Ox-inspired half-seal</strong>
+<p>Raise index and little finger; fold the middle two. Tuck the thumb across them. Chakra Cloak in this game.</p>
+</div>
+</div>
+<p>Most Naruto animal seals use two hands. These half-seals and jutsu mappings are simplified one-hand game controls, not exact canonical casting sequences. Rasengan needs no hand seals in the story; Amaterasu is an eye technique. The two-hand Shadow Clone control is also simplified.</p>
+</details>
+
+<div class="bottom">
+<details id="manual">
+<summary>Manual chakra controls</summary>
+<p id="manualNote">Buttons simulate a hand sign while the camera is off. Release to scatter the dots.</p>
+<button id="release" type="button">Release / scatter</button>
+<label for="manualOpen">Hand openness <span id="manualOpenLabel">50%</span></label>
+<input id="manualOpen" type="range" min="0" max="100" value="50">
+<label for="manualSpeed">Movement speed <span id="manualSpeedLabel">0%</span></label>
+<input id="manualSpeed" type="range" min="0" max="100" value="0">
+<label for="manualNear">Closeness <span id="manualNearLabel">40%</span></label>
+<input id="manualNear" type="range" min="0" max="100" value="40">
+</details>
+
+<details>
+<summary>How to train &amp; play</summary>
+<ul>
+<li>Practice: hold a sign for 0.2 seconds to morph the dots into its jutsu, then keep that sign visible. Dots disperse when the pose is unrecognized or the hand leaves the camera. Speed and closeness shape the active jutsu.</li>
+<li>Speed adds sparks and rotation. Closeness increases the aura size and intensity. It is a relative estimate from palm size, not a distance measurement.</li>
+<li>Match: fist beats V, V beats palm, palm beats fist. First to 3 wins. Hold for 0.6 seconds; lower both hands out of frame before the next round. Power changes the visuals; the match uses standard rock-paper-scissors rules.</li>
+<li>Offline, buttons or keys 1–9 simulate a sign (1–3 in a match); use Release / scatter to disperse the dots. With the camera on, formation requires a recognized hand sign. The extra techniques are for practice. Toggle Classic mode for plain match names.</li>
+<li>Tiger and Dragon are one-hand adaptations; see the sign guide for finger placement and story notes. Use good lighting, separate the fingers, and face your palm toward the camera.</li>
+</ul>
+</details>
+</div>
+
+<footer>
+<span>MEDIAPIPE HAND TRACKING · CAMERA FRAMES PROCESSED IN THIS TAB</span>
+<span><a href="" download="Chakra_Clash.html">Download HTML</a> · Internet needed for graphics and hand tracking · Chrome / Edge recommended</span>
+</footer>
+</main>
+
+<script id="chakra-core">
+var ChakraCore=(()=>{const n=(r,t=0,e=1)=>Math.max(t,Math.min(e,r)),p=(r,t)=>Math.hypot(r.x-t.x,r.y-t.y,(r.z||0)-(t.z||0));function m(r,t,e){const s={x:r.x-t.x,y:r.y-t.y,z:(r.z||0)-(t.z||0)},i={x:e.x-t.x,y:e.y-t.y,z:(e.z||0)-(t.z||0)},o=Math.hypot(s.x,s.y,s.z)*Math.hypot(i.x,i.y,i.z);return o?Math.acos(n((s.x*i.x+s.y*i.y+s.z*i.z)/o,-1,1))*180/Math.PI:0}function f(r,t=1){if(!r||r.length!==21||r.some(l=>!Number.isFinite(l.x)||!Number.isFinite(l.y)))return null;const e=r.map(l=>({x:l.x*t,y:l.y,z:(l.z||0)*t})),s=(p(e[0],e[9])+p(e[5],e[17]))/2;if(s<.008)return null;const i=[5,9,13,17].map(l=>{const y=n((m(e[l],e[l+1],e[l+2])-75)/90),C=n((p(e[l+3],e[0])/p(e[l],e[0])-1.05)/.7);return .65*y+.35*C}),o=n((p(e[4],e[17])/s-.9)/.9),a=(i.reduce((l,y)=>l+y,0)+o)/5,u=i.map(l=>l>.67),h=i.map(l=>l<.42),x=p(e[4],e[8])/s;let c=null;x<.32&&u[1]&&u[2]&&u[3]?c="pinch":u.every(Boolean)?c="palm":h.every(Boolean)?c="fist":u[0]&&u[1]&&h[2]&&h[3]?c=p(e[8],e[12])/s<.28?"tiger":"victory":u[0]&&h[1]&&h[2]&&u[3]?c="horns":u[0]&&h[1]&&h[2]&&h[3]?c="point":h[0]&&h[1]&&h[2]&&u[3]&&o>.65&&(c="dragon");const F={x:(r[0].x+r[5].x+r[9].x+r[17].x)/4,y:(r[0].y+r[5].y+r[9].y+r[17].y)/4};return{openness:a,near:n((s-.065)/.23),gesture:c,center:F,palmSize:s,fingers:i,pinch:x}}class z{constructor(){this.clear()}clear(){this.previous=null}update(t,e,s=1){const i=f(t,s);if(!i)return this.clear(),null;const o=this.previous,a=o?(e-o.now)/1e3:0;return i.speed=o&&a>=.01&&a<=.23?n(Math.hypot((i.center.x-o.center.x)*s,i.center.y-o.center.y)/a/1.2):0,this.previous={...i,now:e},i}}function v(r){if(r.length!==2||r.some(s=>!s||!["victory","tiger"].includes(s.gesture)))return null;const[t,e]=r;return Math.hypot(t.center.x-e.center.x,t.center.y-e.center.y)<(t.palmSize+e.palmSize)*1.5?"clone":null}const g=(r,t,e)=>n(.15+.45*n(r)+.23*n(t)+.17*n(e));class M{constructor(){this.value=0}update(t,e,s){return this.value=t?n(this.value+Math.max(0,e)*(.6+n(s)*.4)):0,this.value}consume(){return this.value<1?!1:(this.value=0,!0)}}class d{constructor({holdMs:t=600,minFrames:e=5}={}){this.holdMs=t,this.minFrames=e,this.reset()}reset(t=!1){this.locked=t,this.pose=null,this.empty=null}update(t,e,s){if(this.locked)return e?this.empty=null:this.empty?(s-this.empty.last>500&&(this.empty.start=s),this.empty.last=s,s-this.empty.start>=350&&this.reset()):this.empty={start:s,last:s},{fire:null,progress:0,locked:this.locked};if(!t)return this.pose=null,{fire:null,progress:0,locked:!1};!this.pose||this.pose.gesture!==t||s-this.pose.last>230?this.pose={gesture:t,start:s,last:s,frames:1}:(this.pose.last=s,this.pose.frames++);const i=s-this.pose.start;return i>=this.holdMs&&this.pose.frames>=this.minFrames?(this.reset(!0),{fire:t,progress:1,locked:!0}):{fire:null,progress:n(i/this.holdMs,0,.99),locked:!1}}}return{clamp:n,measure:f,Tracker:z,seal:v,energy:g,HoldGate:d,Charge:M}})();
+</script>
+
+<script type="importmap">
+{
+  "imports": {
+    "three": "https://cdn.jsdelivr.net/npm/three@0.187.0/build/three.module.js",
+    "quarks.core": "https://cdn.jsdelivr.net/npm/quarks.core@0.18.0/dist/quarks.core.esm.js",
+    "three.quarks": "https://cdn.jsdelivr.net/npm/three.quarks@0.18.0/dist/three.quarks.esm.js"
+  }
+}
+</script>
+
+<script type="module">
+window.chakraGraphicsReady=(async()=>{const[t,Y]=await Promise.all([import("three"),import("three.quarks")]),{BatchedRenderer:$,ParticleSystem:ee,ConstantValue:T,IntervalValue:te,ConstantColor:re,ColorOverLife:ae,Gradient:oe,SizeOverLife:ie,PiecewiseBezier:ne,Bezier:se,SphereEmitter:le,RenderMode:de,Vector3:F,Vector4:ce}=Y;function fe({count:C,onLost:pe}){const o=document.createElement("canvas");o.id="chakraGpu",o.hidden=!0,o.setAttribute("aria-hidden","true");let l;try{l=new t.WebGLRenderer({canvas:o,alpha:!0,antialias:!1,powerPreference:"default"})}catch(e){throw o.remove(),e}document.body.append(o);const w=new t.Scene,v=new t.OrthographicCamera(0,1,1,0,.1,3e3);v.position.z=1e3,l.setClearColor(0,0),l.setPixelRatio(1);const p=new t.BufferGeometry,x=new Float32Array(C*3),G=new Float32Array(C*4),V=new Float32Array(C);p.setAttribute("position",new t.BufferAttribute(x,3).setUsage(t.DynamicDrawUsage)),p.setAttribute("tint",new t.BufferAttribute(G,4).setUsage(t.DynamicDrawUsage)),p.setAttribute("dotSize",new t.BufferAttribute(V,1).setUsage(t.DynamicDrawUsage));const P=new t.ShaderMaterial({transparent:!0,depthWrite:!1,depthTest:!1,blending:t.AdditiveBlending,uniforms:{pixelRatio:{value:1}},vertexShader:`attribute vec4 tint; attribute float dotSize; uniform float pixelRatio; varying vec4 vTint;
+void main(){vTint=tint; gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.0); gl_PointSize=dotSize*pixelRatio;}`,fragmentShader:`precision mediump float; varying vec4 vTint;
+void main(){float r=length(gl_PointCoord-0.5)*2.0; if(r>1.0)discard;
+float glow=exp(-r*r*5.5)*(1.0-smoothstep(0.7,1.0,r));
+vec3 color=mix(vTint.rgb,vec3(1.0),exp(-r*r*70.0)*0.7);
+gl_FragColor=vec4(color,vTint.a*glow);}`}),j=new t.Points(p,P);j.frustumCulled=!1,w.add(j);const h=new $;w.add(h);const y=document.createElement("canvas");y.width=y.height=64;const k=y.getContext("2d"),g=k.createRadialGradient(32,32,0,32,32,32);g.addColorStop(0,"#ffffffff"),g.addColorStop(.15,"#ffffffdd"),g.addColorStop(.45,"#ffffff50"),g.addColorStop(1,"#ffffff00"),k.fillStyle=g,k.fillRect(0,0,64,64);const W=new t.CanvasTexture(y),S=[],_=[];function E(e,i,s,A){const B=new t.MeshBasicMaterial({map:W,transparent:!0,depthWrite:!1,depthTest:!1,blending:t.AdditiveBlending,toneMapped:!1});_.push(B);const u=new ee({duration:3,looping:!0,worldSpace:!0,startLife:new te(...e),startSpeed:new T(i),startSize:new T(s),startColor:new re(new ce(1,1,1,A)),emissionOverTime:new T(0),shape:new le({radius:10,thickness:.35}),material:B,renderMode:de.BillBoard,behaviors:[new ae(new oe([[new F(1,1,1),0],[new F(1,1,1),1]],[[0,0],[1,.12],[.65,.55],[0,1]])),new ie(new ne([[new se(.45,1.1,.8,0),0]]))]});return w.add(u.emitter),h.addSystem(u),S.push(u),u}const I=E([.16,.42],90,6,.95),Q=E([.3,.65],15,32,.2),Z=E([.35,.7],30,25,.27),L=new Map;function z(e){return L.has(e)||L.set(e,[1,3,5].map(i=>parseInt(e.slice(i,i+2),16)/255)),L.get(e)}let ue=1,D=1,me=1,q=null,U=!1,M=!1;function we(e,i,s){ue=e,D=i,me=s,l.setSize(Math.round(e*s),Math.round(i*s),!1),v.right=e,v.top=i,v.updateProjectionMatrix(),P.uniforms.pixelRatio.value=s}const H=e=>{e.preventDefault(),M||pe()};o.addEventListener("webglcontextlost",H);function ve(e){if(M||l.getContext().isContextLost())throw Error("Graphics context unavailable");const{particles:i,formation:s,fade:A,colors:B,previousColors:u,energy:m,speed:J,anchor:K,radius:f,gesture:d,active:ge,still:N,dt:Se}=e,be=[z("#69cfff"),z("#d8f5ff")],X=B.map(z),Ce=u.map(z);for(let r=0;r<C;r++){const c=i[r],b=r*3,R=r*4,n=c.w>.8?1:0;x[b]=c.x,x[b+1]=D-c.y,x[b+2]=c.drawZ;for(let a=0;a<3;a++)G[R+a]=be[n][a]*(1-s)+(Ce[n][a]*(1-A)+X[n][a]*A)*s;G[R+3]=c.drawAlpha,V[r]=c.drawSize*1.35}for(const r of Object.values(p.attributes))r.needsUpdate=!0;const O=ge&&!N;if(!O||q!==d){for(const r of S)r.stop();U=!1}if(O){if(!U)for(const n of S)n.play();const r=X[0],c=d==="point"||d==="pinch"||d==="tiger",b=d==="clone"||d==="dragon",R=[(35+J*150+m*70)*(d==="victory"?1.6:1),20+m*35,c||b?45+m*40:0];S.forEach((n,a)=>{n.emitter.position.set(K.x,D-K.y,a===1?-f*.4:f*.2),n.emitterShape.radius=f*(a===1?.75:a===2?.52:.28),n.emissionOverTime.value=R[a],n.startColor.color.set(r[0],r[1],r[2],a===0?.95:a===1?.18:.28)}),I.startSpeed.value=40+J*180+m*65,I.startSize.value=3.5+m*4,Q.startSize.value=f*(.4+m*.22),Q.startSpeed.value=f*.15,Z.startSize.value=f*.45,Z.startSpeed.value=f*.4}return q=d,U=O,w.updateMatrixWorld(!0),N?h.update(0):h.update(Math.min(Se,.1)),l.render(w,v),o}function he(){if(!M){M=!0,o.removeEventListener("webglcontextlost",H);for(const e of S)e.dispose();for(const e of h.batches)e.dispose(),e.material?.dispose();for(const e of _)e.dispose();W.dispose(),p.dispose(),P.dispose(),l.dispose(),l.forceContextLoss(),o.remove()}}return{resize:we,render:ve,dispose:he}}window.ChakraGraphics={createRenderer:fe}})().catch(()=>{window.chakraGraphicsFailed=!0});
+</script>
+
+<!--
+Graphics:
+Three.js 0.187.0 — MIT, three.js authors.
+three.quarks / quarks.core 0.18.0 — MIT, Forrest Sun.
+Loaded from pinned npm distributions via jsDelivr.
+-->
+
+<script id="chakra-fx">
+var ChakraFX=(()=>{const x=Math.PI*2,I=t=>t-Math.floor(t),v=t=>I(Math.sin(t*127.1+311.7)*43758.5453);function P(t){return{i:t,u:v(t+1),v:v(t+613),w:v(t+1337),a:v(t+91)*x}}function b(t,h){const a=Math.max(0,Math.min(.999999,h))*(t.length-1),s=Math.floor(a),e=a-s;return{x:t[s][0]+(t[s+1][0]-t[s][0])*e,y:t[s][1]+(t[s+1][1]-t[s][1])*e}}const w=[[-.17,-.59],[-.33,-.42],[-.66,-.04],[-.5,.09],[-.25,-.13],[-.24,.26],[-.42,1.02],[-.21,1.05],[0,.47],[.21,1.05],[.42,1.02],[.24,.26],[.25,-.13],[.5,.09],[.66,-.04],[.33,-.42],[.17,-.59],[-.17,-.59]];function k(t){if(t.i%5===0){const s=t.u*x;return{x:Math.cos(s)*.23,y:-.82+Math.sin(s)*.25}}if(t.i%5===1)return{x:(t.u-.5)*.42,y:-.91+t.v*.07};const h=b(w,t.u),a=t.i%3===0?.52+t.v*.48:1;return{x:h.x*a,y:h.y}}function d(t,h,a){const s=t*x/12+.08*Math.sin(a*.5),e=.12+h*1.75,l=(Math.sin(h*43+t*7+Math.sin(a*4))*.09+Math.sin(h*79+t)*.045)*(.2+h);return{x:Math.cos(s)*e-Math.sin(s)*l,y:Math.sin(s)*e+Math.cos(s)*l}}function j(t,h,a){const{u:s,v:e,w:l,a:f,i:M}=h;let c=0,o=0,i=0;if(t==="fist"){const n=s*2-1,r=Math.sqrt(1-n*n),u=f+a*(.7+l*.35)+n*4,y=M%4===0?.25+e*.7:1;c=r*Math.cos(u)*y,o=n*y,i=r*Math.sin(u)*y;const q=.35,C=o*Math.cos(q)-i*Math.sin(q);i=o*Math.sin(q)+i*Math.cos(q),o=C}else if(t==="palm"){const n=M%4,r=n*x/4+a*.8+s*1.1,u=.16+s*1.25,y=(e-.5)*.32*Math.sin(s*Math.PI);c=Math.cos(r)*u-Math.sin(r)*y,o=Math.sin(r)*u+Math.cos(r)*y,i=Math.sin(r)*.25}else if(t==="victory")if(M%5===0){const n=Math.sqrt(s)*.28;c=Math.cos(f+a)*n,o=Math.sin(f+a)*n,i=.7}else{const n=d(M%12,s,a);c=n.x+(e-.5)*.035,o=n.y+(l-.5)*.035,i=.3}else if(t==="point"||t==="tiger")if(M%5<3){const n=Math.sqrt(s)*.82;c=Math.cos(f+a*.6)*n,o=.3+Math.sin(f+a*.6)*n*.9,i=Math.sqrt(Math.max(0,1-n*n))}else c=(e-.5)*(.9*(1-s))+.22*Math.sin(a*2+s*5)*s,o=.1-s*2,i=.2+e*.4;else if(t==="pinch")if(M%4===0){const n=.58+e*.09;c=Math.cos(f)*n,o=.33+Math.sin(f)*n*.72,i=.1}else{const n=M%7;c=(n-3)*.23*(1-s*.35)+Math.sin(a*1.7+s*7+n)*(.06+s*.14)+(e-.5)*.08,o=.65-s*(1.2+.55*Math.sin(n+1)**2),i=.3}else if(t==="horns")if(M%5<3){const n=k(h);c=n.x*.75,o=n.y*.9,i=.5}else{const n=M%9,r=Math.PI+n*Math.PI/8,u=.3+s*1.6;c=Math.cos(r)*u+Math.sin(s*5+a+n)*.08*s,o=.5+Math.sin(r)*u*.9+.12*Math.sin(a+s*4),i=-.3}else if(t==="dragon")if(M%5<3){const n=.12+.12*s,r=f+a*1.4;c=Math.sin(s*7-a*.5)*(.55+s*.2)+Math.cos(r)*n,o=1.1-s*2.1+Math.sin(r)*n*.6,i=Math.sin(r)*n*2}else M%5===3?(c=.5+Math.cos(f)*(.28+e*.07),o=-.92+Math.sin(f)*.21,i=Math.sin(f)*.2):(c=.5+(M%2?1:-1)*(.15+s*.22),o=-1.05-s*.43,i=.3);else if(t==="clone"){const n=k(h);c=n.x*.8+(M%3-1)*1.5,o=n.y*.95+Math.sin(a*.7+M%3)*.025,i=M%3===1?.6:0}return{x:c,y:o,z:i}}function z(t,h,a,s){return{x:a*(.06+.88*t.u+.018*Math.sin(h*.28+t.a)),y:s*(.2+.55*t.v+.035*Math.cos(h*.23+t.a))}}function A(t,h,a,s=20){if(a<=0)return t;const e=Math.exp(-s*a);for(const[l,f]of[["x","vx"],["y","vy"]]){const M=t[l]-h[l],c=(t[f]+s*M)*a;t[l]=h[l]+(M+c)*e,t[f]=(t[f]-s*c)*e}return t}return{seed:P,target:j,spring:A,bolt:d,scatter:z}})();
+</script>
+
+<script type="module">
+const a=e=>document.getElementById(e),M=ChakraCore,S={fist:{name:"Rasengan",element:"WIND / ROTATION",note:"Close to concentrate. Open to release.",colors:["#69cfff","#d8f5ff"],icon:"\u270A",move:"rock"},palm:{name:"Wind Release",element:"WIND / EXPANSION",note:"An open palm sends the current outward.",colors:["#65edc6","#d0ffe4"],icon:"\u270B",move:"paper"},victory:{name:"Chidori",element:"LIGHTNING / SURGE",note:"Move faster to wake the lightning.",colors:["#45bfff","#ddfaff"],icon:"\u270C\uFE0F",move:"scissors"},point:{name:"Fireball",element:"FIRE / IGNITION",note:"Feed the flame with speed and an open hand.",colors:["#ff935c","#ffe3a0"],icon:"\u261D\uFE0F"},pinch:{name:"Amaterasu",element:"BLACK FLAME / FOCUS",note:"A small seal. A concentrated violet flame.",colors:["#b47cff","#eea6ff"],icon:"\u{1F44C}"},horns:{name:"Chakra Cloak",element:"CHAKRA / AURA",note:"Bring your hand closer to grow the cloak.",colors:["#ffad54","#ffe9a2"],icon:"\u{1F918}"},clone:{name:"Shadow Clone",element:"SHADOW / MULTIPLICATION",note:"Two hands. Three echoes of your chakra.",colors:["#d1acff","#f1e5ff"],icon:"\u270C\uFE0F\u270C\uFE0F"},tiger:{name:"Great Fireball",element:"TIGER HALF-SEAL / FIRE",note:"Index and middle together. Fold ring and little finger.",colors:["#ff7548","#fff0b0"],icon:"\u5BC5"},dragon:{name:"Water Dragon",element:"DRAGON HALF-SEAL / WATER",note:"Extend thumb and little finger. Fold the other three.",colors:["#55dbe9","#d5ffff"],icon:"\u8FB0"}},Fe=Object.keys(S),Ye=["rock","paper","scissors"],_e={rock:"scissors",paper:"rock",scissors:"paper"},Xe={rock:"Rock",paper:"Paper",scissors:"Scissors"},xe=[...document.querySelectorAll("[data-gesture]")],N=a("video"),T=a("overlay"),L=T.getContext("2d"),be=a("particles"),t=be.getContext("2d"),Ne="https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.14",Je="https://storage.googleapis.com/mediapipe-models/hand_landmarker/hand_landmarker/float16/1/hand_landmarker.task",le="Show your whole hand, palm toward the camera. Practice signs activate in 0.2 seconds. Match moves need 0.6 seconds.";let p="practice",C="fist",Q=0,ce=0,Ce=0,H=null,u=null,we=0,ke="fist",B=1,I=!1,D=null,W={openness:.5,speed:0,near:.4},R={...W},Le=!1,P=null;const ve=new M.Tracker,q=new M.HoldGate,z=new M.HoldGate({holdMs:200,minFrames:3}),Y=()=>Q>=3||ce>=3,de=()=>document.documentElement.dataset.theme==="shinobi",V=e=>!de()&&S[e].move?Xe[S[e].move]:S[e].name,he=e=>Fe.find(o=>S[o].move===e);
+
+function E(e,o=0){a("hint").textContent=e,a("hold").value=o}
+function Oe(){const e=S[C];a("technique").textContent=I?V(C):"Chakra dispersed",a("element").textContent=I?e.element:"UNBOUND / PARTICLE FIELD",a("techniqueNote").textContent=I?e.note:"Hold a hand sign to gather the dots.";for(const o of xe)o.setAttribute("aria-pressed",String(I&&o.dataset.gesture===C))}
+function $(e){I!==e&&(I=e,e?B=0:(G.update(!1,0,0),K()),Oe())}
+function ee(e){e!==C&&(ke=C,B=0),C=e,Oe()}
+function Ze(e,o,r){if(!e)return D=null,z.reset(),$(!1),{fire:null,progress:0};if(e===D)return C!==e&&ee(e),$(!0),{fire:null,progress:1};D&&(D=null,z.reset()),$(!1);const n=z.update(e,o,r);return n.fire&&(D=n.fire,ee(n.fire),$(!0),z.reset()),n}
+
+function te(){a("title").textContent=de()?"Chakra Clash":"Rock Paper Scissors",a("theme").textContent=de()?"Classic mode":"Shinobi mode",a("practice").setAttribute("aria-pressed",String(p==="practice")),a("match").setAttribute("aria-pressed",String(p==="match")),a("practiceInfo").hidden=p!=="practice",a("matchInfo").hidden=p!=="match",a("reveal").hidden=p!=="match",a("score").textContent=`You ${Q} \xB7 CPU ${ce}`,a("round").textContent=`Round ${H?Ce:1}`,a("reveal").textContent=H?`${S[he(H.player)].icon} VS ${S[he(H.machine)].icon}`:"\u25CC VS \u25CC",p==="match"?(a("result").textContent=Y()?Q>=3?"You win the match!":"CPU wins the match.":H?H.result:"Show your move",a("detail").textContent=H?`You played ${V(he(H.player))}. CPU played ${V(he(H.machine))}.`:"Fist, palm, or V. Buttons and keys 1\u20133 work too."):(a("result").textContent="Build your chakra",a("detail").textContent="Hold a sign to select a technique, then move, open, or close your hand.");for(const e of xe){const o=e.dataset.gesture;e.disabled=p==="match"&&(!S[o].move||Y()),e.querySelector("strong").textContent=V(o)}a("legendHint").textContent=p==="match"?"3 match moves \xB7 extra jutsu in practice":"8 one-hand poses + a two-hand seal",ee(C),K()}
+function He(e){if(p!=="match"||Y()||!S[e]?.move)return;const o=S[e].move,r=Ye[Math.floor(Math.random()*3)];let n="Draw";_e[o]===r?(Q++,n="You win the round"):o!==r&&(ce++,n="CPU wins the round"),Ce++,H={player:o,machine:r,result:n},ee(e),q.reset(!!u?.ready),te(),u?.ready&&E(Y()?"Select New match to play again.":"Move locked. Lower both hands out of frame.",100)}
+function Ve(e){p==="match"&&(!S[e]?.move||Y())||($(!1),u||$(!0),p==="match"?He(e):(ee(e),z.reset(),a("result").textContent=`${V(e)} selected`,a("detail").textContent="Use the sliders below or turn on the camera to shape the chakra."))}
+for(const e of xe)e.onclick=()=>Ve(e.dataset.gesture);
+function Ue(e){p!==e&&(p=e,D=null,$(!1),q.reset(!!u?.ready),z.reset(),te(),E(u?.ready&&p==="match"?"Lower both hands out of frame to begin.":le))}
+a("practice").onclick=()=>Ue("practice"),a("match").onclick=()=>Ue("match"),a("theme").onclick=()=>{document.documentElement.dataset.theme=de()?"classic":"shinobi",te()},a("reset").onclick=()=>{Q=ce=Ce=0,H=null,D=null,$(!1),q.reset(!!u?.ready),te(),E(u?.ready?"Lower both hands to start the new match.":le)},document.addEventListener("keydown",e=>{if(e.repeat||e.altKey||e.ctrlKey||e.metaKey||e.shiftKey||e.target.closest('input,textarea,select,[contenteditable="true"]'))return;const o=Fe[Number(e.key)-1];o&&(e.preventDefault(),Ve(o))});
+
+function fe(){a("release").disabled=!!u;for(const[e,o]of[["manualOpen","openness"],["manualSpeed","speed"],["manualNear","near"]])a(e+"Label").textContent=a(e).value+"%",a(e).disabled=!!u,u||(W[o]=Number(a(e).value)/100);a("manualNote").textContent=u?"Camera tracking controls the chakra. Stop the camera to use these sliders.":"Buttons simulate a sign while the camera is off. Use Release / scatter to disperse the dots."}
+for(const e of["manualOpen","manualSpeed","manualNear"])a(e).oninput=fe;
+a("release").onclick=()=>{u||(D=null,z.reset(),$(!1),a("result").textContent="Chakra released",a("detail").textContent="Choose a technique or show a hand sign to gather the dots again.")},a("sensitivity").oninput=()=>{a("sensitivityValue").textContent=Number(a("sensitivity").value).toFixed(1)+"\xD7"};
+
+function ae(){ve.clear(),P=null,Le=!1,D=null,z.reset(),$(!1)}
+function _(e=le,o=!1){const r=u;u=null,r?.frame&&cancelAnimationFrame(r.frame),r?.stream?.getTracks().forEach(n=>n.stop()),r?.landmarker?.close(),N.srcObject=null,L.clearRect(0,0,T.width,T.height),a("emptyCamera").hidden=!1,a("emptyCamera").style.display="flex",a("camera").textContent=o?"Retry camera":"Start camera",a("cameraState").textContent="OFFLINE",a("inputSource").textContent="MANUAL INPUT",a("trackingState").textContent="Manual practice available",q.reset(),ae(),E(e),fe()}
+
+async function Qe(){if(!navigator.mediaDevices?.getUserMedia){_("Camera access needs HTTPS or localhost in a browser. You can still use the controls.",!0);return}const e={ready:!1,lastVideo:-1,lastFrame:-1/0};u=e,ae(),a("camera").textContent="Cancel",a("cameraState").textContent="CONNECTING",fe(),E("Allow camera access in your browser.");let o=!1;try{const r=await navigator.mediaDevices.getUserMedia({video:{width:640,height:480,facingMode:"user"},audio:!1});if(u!==e){r.getTracks().forEach(s=>s.stop());return}if(e.stream=r,r.getVideoTracks().forEach(s=>s.addEventListener("ended",()=>{u===e&&_("Camera disconnected. Retry or use the controls.",!0)},{once:!0})),N.srcObject=r,await N.play(),u!==e)return;a("emptyCamera").hidden=!0,a("emptyCamera").style.display="none",o=!0,E("Loading MediaPipe hand tracking\u2026");const n=we?`?retry=${we}`:"",{FilesetResolver:f,HandLandmarker:h}=await import(`${Ne}/vision_bundle.mjs${n}`).catch(s=>{throw we++,s});if(u!==e)return;const y=await f.forVisionTasks(`${Ne}/wasm`);if(u!==e)return;const i={baseOptions:{modelAssetPath:Je,delegate:"GPU"},runningMode:"VIDEO",numHands:2,minHandDetectionConfidence:.6,minHandPresenceConfidence:.6,minTrackingConfidence:.6};let b;try{b=await h.createFromOptions(y,i)}catch{if(u!==e)return;i.baseOptions.delegate="CPU",b=await h.createFromOptions(y,i)}if(u!==e){b.close();return}e.landmarker=b,e.connections=h.HAND_CONNECTIONS,e.ready=!0,e.lastFresh=performance.now(),W={openness:0,speed:0,near:0},ae(),q.reset(p==="match"),a("camera").textContent="Stop camera",a("cameraState").textContent="LIVE",a("inputSource").textContent="LIVE HAND INPUT",E(p==="match"?"Lower both hands out of frame to begin.":le),e.frame=requestAnimationFrame(s=>$e(e,s))}catch(r){if(u!==e)return;const n=r.name==="NotAllowedError"?"Allow camera access in browser settings, then retry.":o?"MediaPipe could not load. Check your connection and retry.":"Camera unavailable. Check the device or use the controls.";_(n,!0)}}
+a("camera").onclick=()=>u?_():Qe();
+
+function et(e,o,r){(T.width!==N.videoWidth||T.height!==N.videoHeight)&&(T.width=N.videoWidth,T.height=N.videoHeight),L.clearRect(0,0,T.width,T.height),e.forEach((n,f)=>{L.strokeStyle=f===r?"#79d6ff":"#d6b2ff",L.lineWidth=2,L.beginPath();for(const{start:h,end:y}of o)L.moveTo(n[h].x*T.width,n[h].y*T.height),L.lineTo(n[y].x*T.width,n[y].y*T.height);L.stroke();for(const h of[0,4,8,12,16,20])L.fillStyle="#fff",L.beginPath(),L.arc(n[h].x*T.width,n[h].y*T.height,3,0,Math.PI*2),L.fill()})}
+
+function tt(e,o){const r=e.landmarks||[],n=N.videoWidth/N.videoHeight||4/3,f=r.map(s=>M.measure(s,n));let h=-1;const y=f.map((s,c)=>({m:s,i:c})).filter(s=>s.m);y.length&&(y.sort((s,c)=>P?Math.hypot(s.m.center.x-P.x,s.m.center.y-P.y)-Math.hypot(c.m.center.x-P.x,c.m.center.y-P.y):c.m.palmSize-s.m.palmSize),h=y[0].i),et(r,u.connections,h);let i=null;if(h>=0){P&&Math.hypot(f[h].center.x-P.x,f[h].center.y-P.y)>.35&&ve.clear();const s=ve.update(r[h],o,n);W={openness:s.openness,speed:s.speed,near:s.near},P=s.center,Le=!0,i=M.seal(f)||(r.length===1?s.gesture:null),p==="match"&&i==="tiger"&&(i="victory"),a("trackingState").textContent=r.length===2?i==="clone"?"Two-hand seal detected":"Two hands \xB7 bring two V signs together":s.gesture?`${V(s.gesture)} sign`:"No recognized sign \xB7 dots dispersed"}else ae(),W={openness:0,speed:0,near:0},a("trackingState").textContent="Waiting for your hand";const b=Ze(p==="match"&&!S[i]?.move?null:i,r.length>0,o);if(p==="match"){if(Y()){E("Select New match to play again.",100);return}const s=S[i]?.move?i:null,c=q.update(s,r.length>0,o);if(c.fire){He(c.fire);return}c.locked?E("Move locked. Lower both hands out of frame.",100):s?E(`${V(s)} detected \xB7 hold steady`,c.progress*100):E(r.length>1?"Show one hand for a match move.":r.length?"Use a fist, open palm, or two-finger V.":"Show one hand to the camera.")}else I?(b.fire&&(a("result").textContent=`${V(b.fire)} activated`,a("detail").textContent="Keep the sign visible to hold the jutsu. Relax or lower your hand to scatter the dots."),E(`${V(C)} active \xB7 keep the sign visible`,100)):E(i?`${V(i)} detected \xB7 hold steady`:r.length?"No recognized sign \xB7 dots dispersed.":"Show a hand sign to gather the dots.",b.progress*100)}
+
+function $e(e,o){if(u===e){if(N.readyState>=2&&N.currentTime!==e.lastVideo&&o-e.lastFrame>=30){e.lastVideo=N.currentTime,e.lastFrame=o,e.lastFresh=o,e.stale=!1;try{tt(e.landmarker.detectForVideo(N,o),o)}catch{_("Tracking stopped. Retry camera or use the controls.",!0);return}}!e.stale&&o-e.lastFresh>750&&(e.stale=!0,ae(),W={openness:0,speed:0,near:0},q.reset(q.locked),L.clearRect(0,0,T.width,T.height),a("trackingState").textContent="No fresh camera frames",E("Camera paused or stalled. Waiting for fresh video, or stop and retry.")),e.frame=requestAnimationFrame(r=>$e(e,r))}}
+addEventListener("pagehide",()=>{u&&_()});
+
+const G=new M.Charge,l={enabled:!1,score:0,combo:0,hits:0,aim:{x:.8,y:.32},pointer:!1,shots:[],targets:[{x:.2,y:.32},{x:.8,y:.32},{x:.7,y:.62}],flashes:[]};
+
+function K(){const e=p==="practice";e||(l.enabled=!1,G.update(!1,0,0),l.shots=[]),a("training").disabled=!e,a("training").setAttribute("aria-pressed",String(l.enabled)),a("arena").classList.toggle("training-on",l.enabled),a("cast").disabled=!e||!l.enabled||!I||G.value<1,a("drillScore").textContent=l.score,a("combo").textContent=l.combo;const o=Math.floor(G.value*100);a("charge").value=o,a("chargeValue").textContent=o+"%"}
+
+a("training").onclick=()=>{p==="practice"&&(l.enabled=!l.enabled,G.update(!1,0,0),l.shots=[],a("drillMessage").textContent=l.enabled?"Hold a sign to charge. Aim with your hand, pointer or arrow keys; press Space or tap a target to cast.":"Targets off. Your jutsu still works in free practice.",K())},a("resetDrill").onclick=()=>{l.score=l.combo=l.hits=0,l.shots=[],l.flashes=[],G.update(!1,0,0),l.targets=[{x:.2,y:.32},{x:.8,y:.32},{x:.7,y:.62}],a("drillMessage").textContent="Training score reset.",K()};
+
+function Se(){if(p!=="practice"||!l.enabled||!I||!G.consume())return!1;const e={...l.aim};return l.shots.push({from:{x:v.x/g,y:v.y/m},to:e,age:0,duration:.3+Math.hypot(e.x*g-v.x,e.y*m-v.y)/1800,color:S[C].colors[0],power:M.energy(R.openness,R.speed,R.near)}),a("drillMessage").textContent=V(C)+" cast!",K(),!0}
+a("cast").onclick=Se;
+function De(e){const o=a("arena").getBoundingClientRect();l.aim={x:M.clamp((e.clientX-o.left)/o.width),y:M.clamp((e.clientY-o.top)/o.height)},l.pointer=!0}
+a("arena").addEventListener("pointermove",e=>{l.enabled&&De(e)}),a("arena").addEventListener("pointerdown",e=>{l.enabled&&(a("arena").focus({preventScroll:!0}),De(e),Se())}),a("arena").addEventListener("pointerleave",()=>{l.pointer=!1});
+
+document.addEventListener("keydown",e=>{const o={ArrowLeft:[-.025,0],ArrowRight:[.025,0],ArrowUp:[0,-.025],ArrowDown:[0,.025]};if(l.enabled&&p==="practice"&&o[e.key]&&!e.altKey&&!e.ctrlKey&&!e.metaKey&&!e.target.closest('input,textarea,select,summary,[contenteditable="true"]')){e.preventDefault();const[r,n]=o[e.key];l.aim={x:M.clamp(l.aim.x+r),y:M.clamp(l.aim.y+n)},l.pointer=!0;return}e.code!=="Space"||e.altKey||e.ctrlKey||e.metaKey||e.target.closest('input,textarea,select,summary,[contenteditable="true"]')||e.target.closest("button:not([data-gesture]):not(#cast)")||p==="practice"&&l.enabled&&(e.preventDefault(),e.repeat||Se())});
+
+function at(e,o,r){if(G.update(l.enabled&&p==="practice"&&I,e,o),K(),!l.enabled||p!=="practice")return;u&&P&&!l.pointer&&(l.aim={x:M.clamp(1-P.x),y:M.clamp(P.y)}),t.save(),t.globalCompositeOperation="source-over",t.globalAlpha=1;const n=Math.max(15,Math.min(g,m)*.055);for(const[i,b]of l.targets.entries()){const s=b.x*g,c=b.y*m;t.lineWidth=1.4,t.strokeStyle="#ffcb87",t.fillStyle="#111827bd",t.beginPath(),t.arc(s,c,n,0,Math.PI*2),t.fill(),t.stroke(),t.beginPath(),t.arc(s,c,n*.53,0,Math.PI*2),t.stroke(),t.fillStyle="#ffe0b6",t.font="10px system-ui",t.textAlign="center",t.fillText(String(i+1),s,c+3)}const f=l.aim.x*g,h=l.aim.y*m;t.strokeStyle=G.value>=1?"#aaffdd":"#acc6df",t.lineWidth=1,t.beginPath(),t.moveTo(f-9,h),t.lineTo(f+9,h),t.moveTo(f,h-9),t.lineTo(f,h+9),t.stroke();const y=[];for(const i of l.shots){i.age+=e;const b=r?1:M.clamp(i.age/i.duration),s=(i.from.x+(i.to.x-i.from.x)*b)*g,c=(i.from.y+(i.to.y-i.from.y)*b)*m;if(b>=1){const w=l.targets.find(k=>Math.hypot((k.x-i.to.x)*g,(k.y-i.to.y)*m)<=n+7);if(w){l.hits++,l.combo++;const k=Math.round(50+i.power*50)+Math.min(l.combo,10)*10;l.score+=k,l.flashes.push({x:w.x,y:w.y,life:.45,color:i.color});const A=l.hits;w.x=.14+A*.271%1*.72,w.y=.24+A*.173%1*.38,a("drillMessage").textContent=`Hit! +${k} \xB7 Combo ${l.combo}`}else l.combo=0,a("drillMessage").textContent="Miss. Aim the crosshair at a target and try again."}else{const w=t.createRadialGradient(s,c,0,s,c,15);w.addColorStop(0,"#ffffff"),w.addColorStop(.2,i.color),w.addColorStop(1,i.color+"00"),t.fillStyle=w,t.fillRect(s-15,c-15,30,30),y.push(i)}}l.shots=y,l.flashes=l.flashes.filter(i=>(i.life-=e,i.life<=0||r?!1:(t.globalAlpha=i.life/.45,t.strokeStyle=i.color,t.beginPath(),t.arc(i.x*g,i.y*m,n+(1-i.life/.45)*25,0,Math.PI*2),t.stroke(),!0))),t.restore(),K()}
+
+const X=ChakraFX,ot=matchMedia("(prefers-reduced-motion: reduce)");let g=0,m=0,j=1,ue=0,Ge=0,Me=0,v={x:0,y:0},oe=!0,x=0,U=null;
+function ne(){const e=U;U=null,e?.dispose(),oe=!0,a("visualStatus").textContent="Standard effects",a("retryVisuals").hidden=!1,a("retryVisuals").textContent=window.chakraGraphicsFailed?"Reload graphics":"Retry enhanced effects"}
+function me(){try{U=ChakraGraphics.createRenderer({count:We,onLost:ne}),U.resize(g,m,j),oe=!0,a("visualStatus").textContent="Enhanced effects",a("retryVisuals").hidden=!0}catch{ne()}}
+a("retryVisuals").addEventListener("click",()=>window.chakraGraphicsFailed?location.reload():me()),addEventListener("pagehide",ne),addEventListener("pageshow",e=>{e.persisted&&!U&&me()});
+
+const We=1500,Ae=Array.from({length:We},(e,o)=>({...X.seed(o),x:0,y:0,vx:0,vy:0,size:.65+o%5*.18})),pe={};
+for(const[e,o]of Object.entries(S))pe[e]=o.colors.map(r=>{const n=document.createElement("canvas");n.width=n.height=24;const f=n.getContext("2d"),h=f.createRadialGradient(12,12,0,12,12,12);return h.addColorStop(0,"#ffffff"),h.addColorStop(.14,r),h.addColorStop(.35,r+"b0"),h.addColorStop(1,r+"00"),f.fillStyle=h,f.fillRect(0,0,24,24),n});
+
+function qe(){const e=a("arena").getBoundingClientRect(),o=g,r=m;g=e.width,m=e.height,j=Math.min(devicePixelRatio||1,2),be.width=Math.round(g*j),be.height=Math.round(m*j),t.setTransform(j,0,0,j,0,0),v={x:g/2,y:m*.48};for(const n of Ae){const f=X.scatter(n,Me,g,m);n.x=o?n.x/o*g:f.x,n.y=r?n.y/r*m:f.y,n.vx=n.vy=0}if(oe=!0,U)try{U.resize(g,m,j)}catch{ne()}}
+new ResizeObserver(qe).observe(a("arena")),qe();
+function ze(e,o,r,n){t.strokeStyle=o,t.lineWidth=r,t.globalAlpha=n,t.beginPath(),e.forEach((f,h)=>h?t.lineTo(f.x,f.y):t.moveTo(f.x,f.y)),t.stroke()}
+
+function nt(e,o,r,n,f,h,y=1){const i=(s,c,w,k)=>ze(s,c,w,k*y),b=S[e].colors[0];if(t.lineCap="round",t.lineJoin="round",e==="fist"){t.strokeStyle=b,t.globalAlpha=.38*y,t.lineWidth=1.1,t.beginPath(),t.arc(o,r,n,0,Math.PI*2),t.stroke();for(let s=0;s<4;s++)t.beginPath(),t.ellipse(o,r,n*(.94+s*.025),n*(.23+s*.12),f*.25+s*Math.PI/4,0,Math.PI*2),t.stroke()}else if(e==="victory")for(let s=0;s<12;s++){const c=Array.from({length:24},(w,k)=>{const A=X.bolt(s,k/23,f);return{x:o+A.x*n,y:r+A.y*n}});if(i(c,b,3,.14+.15*h),i(c,"#e9f8ff",.9,.5+.35*h),s%2===0){const w=c[12],k=c[19];i([w,{x:k.x+n*.15*Math.sin(s),y:k.y-n*.2},{x:k.x+n*.3*Math.sin(s),y:k.y-n*.35}],b,.8,.6)}}else if(e==="palm"){t.strokeStyle=b,t.lineWidth=1.1,t.globalAlpha=.4*y;for(let s=0;s<4;s++){t.beginPath();for(let c=0;c<45;c++){const w=c/44,k=s*Math.PI/2+f*.8+w*1.1,A=n*(.16+w*1.25);c?t.lineTo(o+Math.cos(k)*A,r+Math.sin(k)*A):t.moveTo(o+Math.cos(k)*A,r+Math.sin(k)*A)}t.stroke()}t.beginPath(),t.arc(o,r,n*.32,0,Math.PI*2),t.stroke()}else e==="horns"&&i([{x:o-n*.28,y:r-n*.64},{x:o-n*.3,y:r-n*1.24},{x:o-n*.08,y:r-n*.92},{x:o+n*.08,y:r-n*.92},{x:o+n*.3,y:r-n*1.24},{x:o+n*.28,y:r-n*.64}],b,1.5,.65);t.globalAlpha=1}
+
+function Be(e){if(requestAnimationFrame(Be),document.hidden)return;const o=ot.matches;if(e-ue<(o?100:12))return;const r=ue?Math.min((e-ue)/1e3,.25):1/60;ue=e;const n=Number(a("sensitivity").value),f=1-Math.exp(-r*(14+n*7));for(const d of["openness","speed","near"]){const O=d==="speed"?M.clamp(W[d]*n):W[d];R[d]+=(O-R[d])*f}o||(Me+=r*(.9+R.speed*2.4));const h=o?0:Me,y=M.energy(R.openness,R.speed,R.near),i=S[C];if(B+=r,x=o?I?1:0:x+((I?1:0)-x)*(1-Math.exp(-r*(I?12:7))),!I&&x<.001&&(x=0),e-Ge>80){Ge=e;const d=O=>Math.round(O*100)+"%";for(const[O,J]of[["open",R.openness],["speed",R.speed],["near",R.near],["intensity",y]])a(O+"Value").textContent=d(J),a(O+"Bar").style.width=d(J);a("energyValue").textContent=d(y)}const b=(.68+.55*R.openness)*(.82+.52*R.near),s={fist:[1.2,1.2],palm:[1.5,1.5],victory:[2,2],point:[1,1.9],pinch:[1,1.9],horns:[2,1.8],clone:[2.15,1.2],tiger:[1,1.9],dragon:[1.2,1.8]}[C];let c=Math.min(g*.24,m*.28)*b;c=Math.min(c,g/(2*s[0]+.65),(m-85)/(s[1]*2+.1));const w=C==="point"||C==="tiger",k=w||C==="pinch"?m*.57:m*.48,A={x:P?g*(.5+(.5-P.x)*.9):g/2,y:P?k+(P.y-.5)*m*.3:k};A.x=M.clamp(A.x,c*s[0]+12,g-c*s[0]-12),A.y=M.clamp(A.y,42+c*(w?1.8:C==="pinch"?1.2:s[1]*.7),m-65-c*(w?.9:s[1]*.7));const Te=o?1:1-Math.exp(-r*(12+n*6));v.x+=(A.x-v.x)*Te,v.y+=(A.y-v.y)*Te,t.globalCompositeOperation="source-over",(oe||o)&&(t.clearRect(0,0,g,m),oe=!1),t.globalAlpha=1,t.fillStyle=`rgba(16,23,35,${o?1:1-Math.exp(-r*15)})`,t.fillRect(0,0,g,m);const re=t.createRadialGradient(v.x,v.y,0,v.x,v.y,c*1.45);re.addColorStop(0,C==="pinch"?"#120b20":i.colors[0]+"18"),re.addColorStop(.5,i.colors[0]+"07"),re.addColorStop(1,i.colors[0]+"00"),t.fillStyle=re,t.globalAlpha=(.4+y*.3)*x,t.fillRect(0,0,g,m),C==="pinch"&&x>.01&&(t.globalAlpha=.9*x,t.fillStyle="#07040d",t.beginPath(),t.ellipse(v.x,v.y+c*.25,c*.59,c*.48,0,0,Math.PI*2),t.fill()),t.globalCompositeOperation="lighter",x>.01&&nt(C,v.x,v.y,c,h,y,x);const se=o?1:1-Math.exp(-B*9),Ke=20+n*6;for(const d of Ae){const O=x>0?X.target(C,d,h):{x:0,y:0,z:0},J=o?0:R.speed*.055*c,ie=X.scatter(d,h,g,m),Pe={x:v.x+O.x*c+Math.sin(h*2+d.a*3)*J,y:v.y+O.y*c+Math.cos(h*1.7+d.a*2)*J},ge={x:ie.x+(Pe.x-ie.x)*x,y:ie.y+(Pe.y-ie.y)*x},Ie=d.x,Re=d.y;o?(d.x=ge.x,d.y=ge.y,d.vx=d.vy=0):X.spring(d,ge,r,Ke);const Ee=1+(.65+(O.z+1)*.22-1)*x,je=(3.4+d.w*2.7)*(.75+y*.55)*Ee,F=3.3+d.w*1.7+(je-3.3-d.w*1.7)*x,Z=.28+d.v*.32+((.3+y*.55)*(.4+d.v*.6)*Ee-(.28+d.v*.32))*x;if(d.drawAlpha=Z,d.drawSize=F,d.drawZ=O.z*c*x,U)continue;!o&&Math.hypot(d.x-Ie,d.y-Re)>1.2&&ze([{x:Ie,y:Re},{x:d.x,y:d.y}],i.colors[0],.65,Z*.28);const ye=d.w>.8?1:0;x<.999&&(t.globalAlpha=Z*(1-x),t.drawImage(pe.fist[ye],d.x-F/2,d.y-F/2,F,F)),se<.99&&x>0&&(t.globalAlpha=Z*(1-se)*x,t.drawImage(pe[ke][ye],d.x-F/2,d.y-F/2,F,F)),t.globalAlpha=Z*se*x,t.drawImage(pe[C][ye],d.x-F/2,d.y-F/2,F,F)}if(U)try{const d=U.render({particles:Ae,formation:x,fade:se,colors:i.colors,previousColors:S[ke].colors,energy:y,speed:R.speed,anchor:v,radius:c,gesture:C,active:I,still:o,dt:r});t.globalAlpha=1,t.drawImage(d,0,0,g,m)}catch{ne()}!o&&I&&B<.6&&(t.globalAlpha=Math.exp(-B*8)*.35*x,t.strokeStyle=i.colors[0],t.lineWidth=1,t.beginPath(),t.arc(v.x,v.y,c*(1+B*1.7),0,Math.PI*2),t.stroke()),t.globalAlpha=1,t.globalCompositeOperation="source-over",at(r,y,o)}
+
+te();
+fe();
+me();
+window.chakraGraphicsReady?.then(()=>{U||me()});
+requestAnimationFrame(Be);
+</script>
+</body>
+</html>
