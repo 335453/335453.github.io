@@ -1,50 +1,81 @@
-# Marketing Copy: AuraVision G1 Smart Glasses
+# Marketing Copy — WERKBLICK (Provisional Concept)
 
-## Slogan
-**Intelligence in Plain Sight. Zero Privacy Compromise.**
+**Newagent / Copywriting stage | Germany | 20 November 2026**  
+**Based on:** `02-strategy.md`. **Audience:** German operations, production and quality leaders. **Truth standard:** An unlaunched concept, no customers or proven results.
 
-## Website Copy
+## 1. Slogan
 
-### Hero Section
-* **Main Headline**: The Smart Glasses Built for the German Boardroom and Beyond.
-* **Sub-Headline**: Experience instant teleprompting, live translation, and subtle heads-up alerts on a featherweight titanium frame. No intrusive cameras, 100% GDPR compliant, and engineered for German professionals.
-* **Primary Call to Action (CTA)**: Reserve Your Founder Edition
-* **Secondary CTA**: Explore Corporate Privacy Specs
+**Arbeit im Blick. Hände frei.**  
+*Work in sight. Hands free.*
 
----
+## 2. Landing-page copy — German
 
-### Core Value Propositions (Features & Selling Points)
+### Hero
+**Eyewear is not the strategy. A better workflow is.** (internal positioning only)
 
-#### 1. 100% Camera-Free & Works Council Compliant
-* **Heading**: Focus on Work, Not Privacy Inquiries.
-* **Copy**: Unlike conventional smart glasses that record bystanders and trigger office bans, AuraVision G1 features zero optical cameras or audio eavesdropping. It is fully compliant with GDPR and German *Betriebsrat* (Works Council) workplace regulations. Wear it freely into client boardrooms, production floors, and sensitive negotiations without friction.
+**Customer-facing headline:**  
+**Arbeitsanweisungen im Blick. Beide Hände frei.**
 
-#### 2. Invisible Micro-LED Optical Heads-Up Display
-* **Heading**: Information Floating in Your Natural Line of Sight.
-* **Copy**: Powered by a dual-eye monochrome green waveguide display, your critical notes, speech teleprompter cues, and turn-by-turn navigation float discreetly at infinite focus. Only you can see the display—it remains entirely invisible to observers sitting directly across from you.
+**Subheadline:**  
+*WERKBLICK ist ein Konzept für einen klar abgegrenzten Smart-Glasses-Piloten in Produktion und Instandhaltung: ein Arbeitsablauf, passende Industrie-Hardware, frühe Einbindung der Beschäftigten und eine nachvollziehbare Erfolgsmessung.*
 
-#### 3. Real-Time Multilingual Translation & Teleprompting
-* **Heading**: Speak With Unwavering Confidence Across European Markets.
-* **Copy**: Deliver high-stakes keynote presentations without ever looking down at cue cards. In cross-border negotiations, read live real-time German-to-English or French-to-German text translations floating seamlessly beside your conversation partner.
+**Eyebrow:** *Konzept für den deutschen Mittelstand · Pilot statt Großprojekt*
 
-#### 4. Master Optician Prescription Support & Bauhaus Titanium Craftsmanship
-* **Heading**: German Optical Precision Meets Ultralight Design.
-* **Copy**: Weighing just 38 grams, AuraVision G1 is forged from hypoallergenic aerospace titanium. Designed in the minimalist Bauhaus tradition, it blends indistinguishably into high-end executive eyewear and pairs seamlessly with custom prescription lenses (*Sehstärke*) from top German optical partners including Fielmann and Apollo.
+**Primary CTA:** **6-Wochen-Pilot ansehen** (links to #pilot)  
+**Secondary CTA:** **Beispielablauf testen** (interactive stepper; links to #demo)
 
----
+### Four specific value propositions
 
-### Primary Call to Action (CTA) Box
-* **Banner Headline**: Elevate Your Daily Focus with German Engineered Optical AI.
-* **Supporting Text**: Backed by a 30-day corporate trial, German customer support, and full GDPR compliance documentation.
-* **Button Text**: Pre-Order AuraVision G1 — €549
+1. **Ein Prozess statt eines Großprojekts.**  
+   *Wir beginnen mit genau einer wiederkehrenden Aufgabe – etwa einer visuellen Qualitätskontrolle – und definieren vorab, woran ein erfolgreicher Pilot zu erkennen wäre.*
+2. **Anweisung dort, wo gearbeitet wird.**  
+   *Prüfschritte können auf geeigneter Industrie-Hardware im Blickfeld erscheinen. Die technische Umsetzung und Gerätekompatibilität müssen im Piloten geprüft werden.*
+3. **Datenschutz und Mitarbeitende früh einbeziehen.**  
+   *Aufnahmen sind für den ersten Prüfablauf nicht vorgesehen. Ein Datenschutz-, Sicherheits- und Mitbestimmungs-Check gehört bereits vor den Praxistest.*
+4. **Ergebnis statt Technikshow.**  
+   *Wir vergleichen Bearbeitungszeit, Nacharbeit, Vollständigkeit und Nutzerfeedback mit einem dokumentierten Ausgangszustand. Auch ein negatives Resultat ist eine wertvolle Entscheidung.*
 
----
+### Problem section
+**Weniger Suchen. Mehr Arbeit am eigentlichen Prozess.**  
+*Papier-SOPs, Bildschirmwechsel und uneinheitliche Routinen können Prüfungen und Wartung erschweren. Ob Smart Glasses diesen Ablauf tatsächlich verbessern, sollte nicht behauptet, sondern im Betrieb überprüft werden.*
 
-## Presentation Key Points (Pitch Deck Outline)
-1. **The Problem**: Smart eyewear adoption in Germany has hit a wall because consumers and corporate Works Councils reject intrusive cameras and potential privacy violations under strict GDPR laws.
-2. **The Problem**: Professionals suffer from smartphone notification fatigue and disjointed eye contact during crucial executive meetings and client presentations.
-3. **The Solution**: AuraVision G1 provides an ultra-lightweight, camera-free optical heads-up display built directly into premium everyday prescription eyewear.
-4. **The Differentiation**: By eliminating cameras entirely and utilizing a micro-LED waveguide display, AuraVision G1 is the only smart glass 100% certified for German corporate workplace use.
-5. **The Differentiation**: Forged in 38g minimalist titanium with native prescription lens compatibility through Germany's top optician networks (Fielmann / Apollo).
-6. **The User Benefit**: Professionals gain hands-free teleprompting, real-time live multilingual translation, and glanceable navigation while maintaining complete presence and trust.
-7. **The Commercial Opportunity**: Capturing Germany's high-income knowledge worker base first, followed by European enterprise expansion across DACH corporate sectors.
+### 6-week pilot
+- **Woche 1 — Verstehen:** Aufgabe, Ist-Prozess, Erfolgskennzahlen und Risiken aufnehmen.
+- **Woche 2 — Vorbereiten:** Geeignetes Gerät und einen unterstützten Ablauf auswählen; IT, Sicherheit, Datenschutz und Beschäftigte einbeziehen.
+- **Woche 3–4 — Erproben:** Arbeitsanweisungen in einem kontrollierten Test anwenden, Papier-/Tablet-Alternative bereithalten.
+- **Woche 5 — Messen:** Zeiten, Fehler, Ausnahmen und Anwenderfeedback vergleichen.
+- **Woche 6 — Entscheiden:** Nachweisbarer Nutzen? Tragbare Kosten? Go / anpassen / stoppen.
+
+### Use-case demonstration
+**Ein Prüfschritt. Klar geführt.**  
+*Interaktive Beispielansicht mit drei Prüfschritten – ausschließlich eine Browser-Demo, nicht die Oberfläche einer echten Smart Glasses oder eine integrierte Industrieanwendung.*
+
+### Objections and trust copy
+- **„Kann jemand heimlich filmen?“** Im vorgeschlagenen Startfall sind keine Videoaufnahmen vorgesehen. Über tatsächliche Gerätefunktionen, Löschfristen und Datenschutzzulässigkeit entscheidet eine konkrete Prüfung – nicht eine Marketingaussage.
+- **„Wird die Leistung einzelner Mitarbeitender überwacht?“** Ziel ist ein Prozessvergleich, kein Mitarbeiterranking. Die konkrete Mitbestimmung und mögliche personenbezogene Verarbeitung werden vor dem Test geprüft.
+- **„Passt das in unsere IT?“** Das lässt sich erst nach Auswahl von Gerät, Anwendungssoftware und IT-Umgebung verbindlich sagen. Eine SAP-/MES-Integration ist im Konzept nicht zugesichert.
+
+### CTA / closing
+**Eine Aufgabe. Ein messbarer Versuch. Eine fundierte Entscheidung.**  
+*Prüfen Sie mit unserem Pilot-Rahmen, ob ein konkreter Arbeitsablauf für Smart Glasses geeignet wäre.*
+
+**Button:** **Pilot-Anfrage vorbereiten** → opens a prefilled inquiry text for the visitor to copy; does **not** submit information or imply a live sales team exists.
+
+**Disclosure:** *WERKBLICK ist ein nicht kommerziell gestartetes Konzept. Keine Anbieterpartnerschaften, Referenzkunden oder Produktverfügbarkeit werden behauptet. Der Name ist nicht markenrechtlich geprüft.*
+
+## 3. Pitch deck — seven points (problem → solution → differentiation → benefit)
+
+1. **Problem:** Wiederkehrende manuelle Prüfungen benötigen klare, am Arbeitsplatz verfügbare Anweisungen.
+2. **Problem:** Ein Headset allein verändert noch keinen Prozess; Einführung, Datenschutz und Mitarbeitendenakzeptanz sind genauso wichtig.
+3. **Solution:** WERKBLICK konzipiert einen eng begrenzten Smart-Glasses-Piloten für genau eine Arbeitsroutine.
+4. **Solution:** Passende Industrie-Hardware und Arbeitsanweisungen werden in einem kontrollierten Test auf Eignung geprüft.
+5. **Differentiation:** Der vorgeschlagene Ansatz startet mit Ist-Prozess, Risiken, Beschäftigten und KPI-Baseline – nicht mit einem Hardware-Katalog.
+6. **Benefit hypothesis:** Hände-freie Informationen könnten Medienwechsel reduzieren; Zeit-, Qualitäts- und Usability-Effekte werden gemessen, nicht versprochen.
+7. **Decision:** Nach sechs Wochen soll eine dokumentierte Entscheidung stehen: ausrollen, ändern oder einstellen.
+
+## 4. Tone and red lines
+
+- **Style:** B2B, concise, direct, German-language and operationally credible.
+- **Do not claim:** guaranteed savings, live integrations, compliance certification, named customers, exclusive technology, 24/7 support, formal financing, signed device partners or existing service availability.
+- **Pricing:** Not displayed on demo homepage. The strategy contains an internally proposed *test range* only; a formal quote is not available.
+- **Provisional company name:** Any commercial use requires trademark search and brand clearance.

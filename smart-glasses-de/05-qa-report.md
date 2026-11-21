@@ -1,28 +1,44 @@
-# QA Report: AuraVision G1 Web Prototype
+# QA Report — WERKBLICK Smart-Glasses Landing-Page Demo
 
-## 🔴 Must Fix
-* **None identified**: The static single-page prototype is syntactically sound, completely self-contained with no broken external assets, and strictly adheres to the strategic positioning and marketing copy.
+**Newagent / QA stage | 20 November 2026**  
+**Reviewed:** `01-research.md`, `02-strategy.md`, `03-copywriting.md`, and `04-prototype/index.html`.  
+**Methods:** HTML parser inspection; Python/BeautifulSoup link validation; Chromium rendering via Playwright `set_content` from the exact HTML source; functional button tests at 1440 × 900 desktop and 390 × 844 mobile viewports; visual screenshot review. These are real Chromium browser checks, **not** a deployed website test or smart-glasses hardware test.
 
-## 🟡 Recommended Fixes
-1. **Interactive Demo Action for Pre-Order Buttons**:
-   * *Location*: `<a href="#preorder" class="btn-primary">` in the Hero and CTA sections.
-   * *Observation*: The anchor jumps directly to `#preorder`, which works cleanly for a static demo, but adding an accessible form input or demo modal in future iterations would further enrich the user experience.
-2. **Table Accessibility Attributes**:
-   * *Location*: `<table class="comparison">`
-   * *Observation*: While visually clean and responsive via `overflow-x: auto`, adding `scope="col"` to `<th>` tags will ensure adherence to strict German and EU digital accessibility standards (BFSG / European Accessibility Act).
+## 🔴 Must fix before delivery
 
-## 🟢 Passed Items
-* **Semantic HTML Structure**: Proper usage of `<header>`, `<main>`, `<section>`, `<footer>`, semantic heading hierarchy (`<h1>` through `<h4>`), and clean navigation inner containers.
-* **Content Fidelity & Strategic Alignment**:
-  * The Slogan (*"Intelligence in Plain Sight. Zero Privacy Compromise."*) matches `03-copywriting.md` verbatim.
-  * All four core value propositions (Camera-Free/Works Council compliance, Micro-LED Waveguide display, Real-time translation, and Master optician prescription integration) are faithfully represented without exaggeration or drift.
-  * The €549 price point accurately reflects the target range (€499–€699) defined in `02-strategy.md`.
-* **Zero External Dependencies**:
-  * Embedded `<style>` with native system font stack (`-apple-system, Segoe UI, Roboto`).
-  * No remote web fonts, CDN scripts, or external image links—guaranteeing rapid loading and zero GDPR data transfer leakage to third parties.
-* **Responsive Design**:
-  * Viewport meta tag properly declared.
-  * Mobile media query (`@media (max-width: 768px)`) smoothly shifts multi-column grids (specs bar and feature cards) into single/double column layouts suitable for handheld devices.
+**None detected.**
 
-## Conclusion: Ready to Deliver?
-**YES (🟢 READY TO DELIVER)**. The web prototype in `projects/smart-glasses-de/04-prototype/index.html` fully satisfies all functional demo criteria, matches the copy and positioning documents, and contains zero blocking issues.
+## 🟡 Recommended improvements / limitations
+
+1. **Not a sales lead-generation system.** The CTA expands a copyable internal-request template rather than sending a contact form. This is intentional for an unlaunched concept and avoids collecting personal data; a production service would need a legitimate contact mechanism, privacy notice and consent/legal basis as applicable.
+2. **Trademark and entity status.** WERKBLICK is a working title only; formal DPMA/EUIPO/WIPO search and domain availability were not completed. The demo appropriately discloses this, but do not commercially publish as a brand until resolved.
+3. **No hardware/backend integration.** The animated stepper is a representative browser interaction and not a tested headset app. An actual hardware pairing, speech interface, network handling, WMS/MES integration, and safety assessment remain open.
+4. **Accessibility and field usability.** Good basic HTML semantics and focus-visible rules, but keyboard-only, screen-reader and device-specific vision/ergonomics testing were not run comprehensively. Test with target users before publication.
+5. **Language / mobile visual density.** Narrow-layout screenshots are readable at source viewport width and have no horizontal overflow; however, German copy is text-heavy and could benefit from shorter sentences on small screens.
+
+## 🟢 Passed checks
+
+| Test | Result / evidence |
+|---|---|
+| HTML source / semantic layout | Contains doctype, `lang="de"`, header, nav, main, sections and footer; parsed without blocker |
+| Standalone file | No linked external scripts, style sheets, fonts or image dependencies; CSS and JavaScript embedded |
+| Internal links | All anchor fragment targets exist; zero empty or `href="#"` links |
+| Content vs strategy | One-workflow, six-week pilot, baseline and go/no-go decision consistent with strategy and copy |
+| No invented proof | No sales, customers, specific savings, vendor relationships, legal certification or guaranteed device compatibility claimed |
+| Privacy scope | Camera-free starting inspection scenario, employee representation and legal reviews appropriately qualified |
+| Desktop layout | Chromium at 1440 × 900: document width 1440 px; no horizontal overflow, no JavaScript page errors |
+| Mobile layout | Chromium at 390 × 844: document width 390 px; no horizontal overflow, no JavaScript page errors |
+| Demo interaction | Next advances 1→2→3 and cycles to 1; initial Back is disabled; tested at both sizes |
+| CTA interaction | Opening the inquiry template makes it visible and sets `aria-expanded=true`; toggle back hides it; tested at both sizes |
+| Screenshot review | Hero, 4 benefit cards, pilot timeline, demo and CTA remain visually distinct on desktop and in a vertically stacked mobile layout |
+
+**Additional output:** `preview-desktop.png` and `preview-mobile.png` are actual Chromium renders of the HTML source.
+
+## Fix–verify rounds
+
+- **Round 0 (initial QA):** no red findings. No change/retest rounds required.
+- Clipboard permission handling is implemented with a manual-selection fallback but was not independently exercised in the automated click tests; report as **not verified**, not passed.
+
+## Verdict
+
+**PASS for a static educational/demo landing page. NOT production-ready.** No red content or interaction blockers discovered in the tests above. Hardware, security, legal, trademark and commercial acceptance are untested.

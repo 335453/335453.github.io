@@ -1,478 +1,134 @@
-<!DOCTYPE html>
-<html lang="en">
+<!doctype html>
+<html lang="de">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>AuraVision G1 — Smart Glasses for the German Market</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#102c32">
+  <meta name="description" content="WERKBLICK – ein Konzept für einen messbaren Smart-Glasses-Piloten in der deutschen Industrie.">
+  <title>WERKBLICK — Arbeit im Blick. Hände frei.</title>
   <style>
-    /* Reset and Base Styles */
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-      line-height: 1.6;
-      color: #1a1a1a;
-      background-color: #f8fafc;
-    }
-    a {
-      text-decoration: none;
-      color: inherit;
-    }
-
-    /* Container */
-    .container {
-      max-width: 1100px;
-      margin: 0 auto;
-      padding: 0 24px;
-    }
-
-    /* Navigation Bar */
-    header {
-      background-color: #ffffff;
-      border-bottom: 1px solid #e2e8f0;
-      position: sticky;
-      top: 0;
-      z-index: 100;
-    }
-    .nav-inner {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      height: 70px;
-    }
-    .logo {
-      font-size: 1.25rem;
-      font-weight: 700;
-      letter-spacing: -0.5px;
-      color: #0f172a;
-    }
-    .logo span {
-      color: #059669;
-    }
-    .nav-cta {
-      background-color: #0f172a;
-      color: #ffffff;
-      padding: 10px 20px;
-      border-radius: 6px;
-      font-size: 0.9rem;
-      font-weight: 600;
-      transition: background-color 0.2s;
-    }
-    .nav-cta:hover {
-      background-color: #1e293b;
-    }
-
-    /* Hero Section */
-    .hero {
-      padding: 80px 0 60px;
-      text-align: center;
-      background: linear-gradient(180deg, #ffffff 0%, #f1f5f9 100%);
-      border-bottom: 1px solid #e2e8f0;
-    }
-    .badge {
-      display: inline-block;
-      padding: 6px 14px;
-      background-color: #ecfdf5;
-      color: #065f46;
-      border: 1px solid #a7f3d0;
-      border-radius: 9999px;
-      font-size: 0.85rem;
-      font-weight: 600;
-      margin-bottom: 24px;
-      letter-spacing: 0.3px;
-    }
-    .hero h1 {
-      font-size: 2.75rem;
-      line-height: 1.2;
-      font-weight: 800;
-      color: #0f172a;
-      max-width: 850px;
-      margin: 0 auto 20px;
-      letter-spacing: -1px;
-    }
-    .hero p {
-      font-size: 1.2rem;
-      color: #475569;
-      max-width: 720px;
-      margin: 0 auto 36px;
-    }
-    .hero-actions {
-      display: flex;
-      justify-content: center;
-      gap: 16px;
-      flex-wrap: wrap;
-    }
-    .btn-primary {
-      background-color: #059669;
-      color: #ffffff;
-      padding: 14px 28px;
-      border-radius: 8px;
-      font-weight: 600;
-      font-size: 1rem;
-      box-shadow: 0 4px 12px rgba(5, 150, 105, 0.25);
-      transition: all 0.2s;
-    }
-    .btn-primary:hover {
-      background-color: #047857;
-      transform: translateY(-1px);
-    }
-    .btn-secondary {
-      background-color: #ffffff;
-      color: #1e293b;
-      padding: 14px 28px;
-      border-radius: 8px;
-      font-weight: 600;
-      font-size: 1rem;
-      border: 1px solid #cbd5e1;
-      transition: background-color 0.2s;
-    }
-    .btn-secondary:hover {
-      background-color: #f8fafc;
-    }
-
-    /* Key Specs Bar */
-    .specs-bar {
-      padding: 30px 0;
-      background-color: #ffffff;
-      border-bottom: 1px solid #e2e8f0;
-    }
-    .specs-grid {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 20px;
-      text-align: center;
-    }
-    .spec-item h4 {
-      font-size: 1.4rem;
-      font-weight: 700;
-      color: #0f172a;
-    }
-    .spec-item p {
-      font-size: 0.9rem;
-      color: #64748b;
-      font-weight: 500;
-    }
-
-    /* Selling Points Section */
-    .features {
-      padding: 80px 0;
-    }
-    .section-header {
-      text-align: center;
-      margin-bottom: 50px;
-    }
-    .section-header h2 {
-      font-size: 2.1rem;
-      font-weight: 700;
-      color: #0f172a;
-      margin-bottom: 12px;
-      letter-spacing: -0.5px;
-    }
-    .section-header p {
-      font-size: 1.1rem;
-      color: #64748b;
-      max-width: 600px;
-      margin: 0 auto;
-    }
-    .feature-grid {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 28px;
-    }
-    .feature-card {
-      background-color: #ffffff;
-      border: 1px solid #e2e8f0;
-      border-radius: 12px;
-      padding: 36px 32px;
-      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
-      transition: transform 0.2s, box-shadow 0.2s;
-    }
-    .feature-card:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.06);
-    }
-    .feature-icon {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      width: 44px;
-      height: 44px;
-      border-radius: 8px;
-      background-color: #f0fdf4;
-      color: #16a34a;
-      font-weight: 700;
-      font-size: 1.1rem;
-      margin-bottom: 18px;
-    }
-    .feature-card h3 {
-      font-size: 1.3rem;
-      font-weight: 700;
-      color: #0f172a;
-      margin-bottom: 12px;
-    }
-    .feature-card p {
-      color: #475569;
-      font-size: 0.98rem;
-      line-height: 1.6;
-    }
-
-    /* Comparison Table Section */
-    .comparison {
-      padding: 60px 0 80px;
-      background-color: #ffffff;
-      border-top: 1px solid #e2e8f0;
-      border-bottom: 1px solid #e2e8f0;
-    }
-    .table-wrapper {
-      overflow-x: auto;
-      margin-top: 36px;
-    }
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      text-align: left;
-    }
-    th, td {
-      padding: 16px 20px;
-      border-bottom: 1px solid #e2e8f0;
-      font-size: 0.95rem;
-    }
-    th {
-      background-color: #f8fafc;
-      font-weight: 700;
-      color: #0f172a;
-    }
-    tr.highlight {
-      background-color: #f0fdf4;
-      font-weight: 600;
-    }
-    tr.highlight td {
-      color: #065f46;
-      border-color: #bbf7d0;
-    }
-
-    /* CTA Section */
-    .cta-section {
-      padding: 80px 0;
-      text-align: center;
-      background-color: #0f172a;
-      color: #ffffff;
-    }
-    .cta-box h2 {
-      font-size: 2.25rem;
-      font-weight: 800;
-      margin-bottom: 16px;
-      letter-spacing: -0.5px;
-    }
-    .cta-box p {
-      font-size: 1.15rem;
-      color: #94a3b8;
-      max-width: 600px;
-      margin: 0 auto 36px;
-    }
-    .cta-box .btn-primary {
-      padding: 16px 36px;
-      font-size: 1.1rem;
-    }
-
-    /* Footer */
-    footer {
-      background-color: #090d16;
-      color: #64748b;
-      padding: 40px 0;
-      font-size: 0.88rem;
-      border-top: 1px solid #1e293b;
-    }
-    .footer-inner {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      flex-wrap: wrap;
-      gap: 16px;
-    }
-    .footer-note {
-      color: #94a3b8;
-    }
-
-    /* Mobile Responsive */
-    @media (max-width: 768px) {
-      .hero h1 {
-        font-size: 2rem;
-      }
-      .specs-grid {
-        grid-template-columns: repeat(2, 1fr);
-        gap: 16px;
-      }
-      .feature-grid {
-        grid-template-columns: 1fr;
-      }
-      .footer-inner {
-        flex-direction: column;
-        text-align: center;
-      }
-    }
+    :root{color-scheme:light;--ink:#112a2d;--muted:#5c7072;--dark:#102c32;--teal:#177f73;--mint:#ccf0e4;--paper:#f7f9f7;--line:#dce5e1;--white:#fff;--aqua:#88d9be;--r:18px}
+    *{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:var(--ink);background:var(--paper);line-height:1.56}a{color:inherit;text-decoration:none}button,textarea{font:inherit}button{cursor:pointer}
+    :focus-visible{outline:3px solid #0f9487;outline-offset:3px} .shell{max-width:1170px;margin:auto;padding:0 28px}.eyebrow{letter-spacing:.13em;text-transform:uppercase;font-size:.73rem;font-weight:760;color:var(--teal)}.sub{color:var(--muted);font-size:1.06rem;max-width:66ch}.mini{font-size:.82rem;color:var(--muted)}
+    header{background:var(--white);border-bottom:1px solid var(--line);position:sticky;top:0;z-index:10}.nav{min-height:74px;display:flex;gap:24px;align-items:center;justify-content:space-between}.brand{display:flex;align-items:center;gap:11px;font-weight:850;letter-spacing:.055em;font-size:1.07rem}.brandmark{width:35px;height:35px;display:grid;place-items:center;background:var(--dark);border-radius:11px;color:var(--aqua);font-weight:900}.links{display:flex;gap:25px;align-items:center;font-size:.91rem;color:#3c5557}.links a:hover{color:var(--teal)}.pill{border:1px solid var(--line);border-radius:99px;padding:7px 13px;font-size:.75rem;color:var(--muted);white-space:nowrap}
+    .hero{background:linear-gradient(135deg,#eaf5f0 0%,#f7f9f7 68%);overflow:hidden}.hero-grid{display:grid;grid-template-columns:1.08fr .92fr;align-items:center;gap:54px;padding-top:82px;padding-bottom:88px}.hero h1{font-size:clamp(2.9rem,5.3vw,4.75rem);line-height:1.08;letter-spacing:-.055em;max-width:720px;margin:18px 0 22px}.hero h1 em{font-style:normal;color:var(--teal)}.hero p{max-width:590px;margin:0 0 30px;color:#496466;font-size:1.13rem}.actions{display:flex;align-items:center;flex-wrap:wrap;gap:12px}.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;border-radius:12px;padding:14px 19px;font-weight:740;font-size:.95rem;border:1px solid var(--dark);min-height:48px}.btn.primary{background:var(--dark);color:#fff}.btn.primary:hover{background:#1c444a}.btn.secondary{background:transparent;color:var(--dark)}.btn.secondary:hover{background:#e4efea}.note{font-size:.8rem;color:var(--muted);margin-top:17px}
+    .visual{background:linear-gradient(150deg,#173c42,#0a2229);border-radius:26px;min-height:460px;box-shadow:0 34px 70px rgba(9,40,42,.18);position:relative;padding:32px;display:flex;align-items:center;justify-content:center;isolation:isolate}.visual:after{content:"";position:absolute;inset:0;background-image:linear-gradient(#8ad5bb0d 1px,transparent 1px),linear-gradient(90deg,#8ad5bb0d 1px,transparent 1px);background-size:28px 28px;border-radius:inherit;pointer-events:none}.graphic{width:100%;position:relative;z-index:1}.graphic svg{width:100%;height:auto;overflow:visible}.screen{position:absolute;left:5%;right:4%;bottom:0;background:#f4fffa;color:var(--ink);border-radius:15px;box-shadow:0 18px 38px #0005;padding:15px 19px;z-index:2}.screen-top{display:flex;justify-content:space-between;color:#4f7070;font-size:.7rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase}.screen strong{font-size:.95rem;display:block;margin:8px 0 9px}.progress{height:5px;background:#d7e8e0;border-radius:9px;overflow:hidden}.progress span{display:block;background:#15806e;width:67%;height:100%}.status{font-size:.7rem;color:#23806f;font-weight:700;margin-top:8px}
+    .stats{display:grid;grid-template-columns:repeat(3,1fr);border:1px solid var(--line);background:var(--white);border-radius:17px;overflow:hidden;margin-top:-30px;position:relative;z-index:1}.stats>div{padding:23px 29px;border-right:1px solid var(--line)}.stats>div:last-child{border:0}.stats strong{display:block;font-size:1.38rem;line-height:1.3}.stats span{font-size:.87rem;color:var(--muted)}
+    section{scroll-margin-top:88px;padding:85px 0}.section-h{font-size:clamp(2rem,3.6vw,3rem);letter-spacing:-.04em;line-height:1.17;margin:12px 0 18px;max-width:830px}.split{display:grid;grid-template-columns:.8fr 1.2fr;gap:70px;align-items:start}.panel{background:white;border:1px solid var(--line);border-radius:20px;padding:29px}.problem-steps{display:grid;gap:14px}.problem-steps article{display:flex;gap:17px;align-items:start}.number{flex:0 0 34px;height:34px;background:#e4f1eb;color:#21685d;display:grid;place-items:center;border-radius:10px;font-weight:800}.problem-steps h3{margin:0 0 3px;font-size:1.05rem}.problem-steps p{margin:0;color:var(--muted);font-size:.93rem}
+    .cards{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-top:32px}.card{background:#fff;border:1px solid var(--line);border-radius:18px;padding:26px;min-height:240px}.ico{width:44px;height:44px;display:grid;place-items:center;border-radius:12px;background:#ddf2e9;color:#146a5d;font-size:1.25rem;font-weight:800;margin-bottom:27px}.card h3{font-size:1.04rem;line-height:1.32;margin:0 0 11px}.card p{font-size:.91rem;color:var(--muted);margin:0}
+    .dark{background:var(--dark);color:white}.dark .eyebrow{color:var(--aqua)}.dark .sub{color:#bed5d4}.timeline{margin-top:34px;display:grid;grid-template-columns:repeat(5,1fr);gap:11px}.tstep{background:#ffffff12;border:1px solid #ffffff27;border-radius:13px;padding:21px}.tstep b{font-size:.73rem;letter-spacing:.09em;color:var(--aqua);text-transform:uppercase}.tstep h3{margin:10px 0 8px;font-size:1.02rem}.tstep p{font-size:.87rem;color:#bcd0d1;margin:0}.tstep:last-child{border-color:#86c9b0}.tags{display:flex;gap:9px;flex-wrap:wrap;margin-top:24px}.tags span{border:1px solid #5d8781;color:#e2f5ee;border-radius:99px;padding:5px 12px;font-size:.77rem}
+    .demo-grid{display:grid;grid-template-columns:.76fr 1.24fr;gap:66px;align-items:center}.device{border-radius:22px;background:linear-gradient(150deg,#123136,#21474b);padding:33px;box-shadow:0 26px 60px #0b242624}.device-label{display:flex;justify-content:space-between;gap:12px;align-items:center;color:#c1ece0;font-size:.7rem;font-weight:800;letter-spacing:.07em;text-transform:uppercase}.device-screen{background:#e8fff4;border-radius:14px;margin-top:20px;min-height:210px;padding:27px}.chip{display:inline-block;background:#d0e9df;color:#236859;border-radius:50px;padding:4px 12px;font-size:.74rem;font-weight:750}.device-screen h3{font-size:1.45rem;line-height:1.24;margin:20px 0 9px}.device-screen p{color:#506961;font-size:.91rem;margin:0}.device-footer{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-top:20px}.device-footer button{border:1px solid #78b8a6;background:transparent;color:#fff;padding:10px 14px;border-radius:9px;font-weight:700}.device-footer button:hover:not(:disabled){background:#28595a}.device-footer button:disabled{opacity:.34;cursor:not-allowed}.device-footer span{font-size:.79rem;color:#c7e4da}
+    .faq{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:30px}.faq article{background:white;border:1px solid var(--line);border-radius:16px;padding:23px}.faq h3{font-size:1rem;margin:0 0 11px}.faq p{margin:0;color:var(--muted);font-size:.89rem}
+    .closing{padding-bottom:95px}.closing-inner{background:#d8efe5;border:1px solid #bddecf;border-radius:25px;padding:47px;display:grid;grid-template-columns:1.2fr .8fr;align-items:center;gap:45px}.closing-inner h2{font-size:2.25rem;line-height:1.14;letter-spacing:-.04em;margin:8px 0 15px}.closing-inner p{color:#47665e;margin:0}.actioncol{display:flex;flex-direction:column;gap:13px;align-items:stretch}.actioncol .btn{width:100%}.request{margin-top:18px;background:#fff;border:1px solid #b4d9cc;border-radius:15px;padding:18px}.request[hidden]{display:none}.request label{font-size:.88rem;font-weight:750;display:block;margin-bottom:8px}.request textarea{width:100%;height:165px;border:1px solid var(--line);border-radius:9px;padding:12px;resize:vertical;color:var(--ink);font-size:.88rem}.request button{margin-top:9px}.request #copyFeedback{color:#247565;display:block;margin-top:6px;font-size:.82rem}
+    footer{background:#eaf0ed;border-top:1px solid var(--line);padding:28px 0 32px;color:#5d706e;font-size:.8rem}.footer-inner{display:flex;justify-content:space-between;gap:25px}.footer-inner p{margin:0;max-width:800px}
+    @media(max-width:950px){.hero-grid{grid-template-columns:1fr;gap:28px;padding-top:64px}.visual{min-height:380px}.split,.demo-grid{grid-template-columns:1fr;gap:27px}.cards{grid-template-columns:repeat(2,1fr)}.timeline{grid-template-columns:repeat(3,1fr)}.faq{grid-template-columns:1fr 1fr}.closing-inner{grid-template-columns:1fr}.links{gap:13px}}
+    @media(max-width:650px){.shell{padding:0 18px}.nav{min-height:67px}.nav .links{display:none}.pill{font-size:.68rem}.hero-grid{padding-top:50px;padding-bottom:75px}.hero h1{font-size:2.67rem}.hero p{font-size:1rem}.visual{padding:16px;min-height:325px;border-radius:20px}.screen{left:5%;right:5%;padding:11px}.stats{grid-template-columns:1fr;margin-top:-24px}.stats>div{padding:15px 20px;border-right:0;border-bottom:1px solid var(--line)}.stats>div:last-child{border:0}section{padding:65px 0}.cards,.timeline,.faq{grid-template-columns:1fr}.card{min-height:0}.closing-inner{padding:29px}.closing-inner h2{font-size:1.85rem}.footer-inner{flex-direction:column}.actions{align-items:stretch}.actions .btn{width:100%}.device{padding:19px}.device-screen{padding:20px;min-height:225px}}
+    @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
   </style>
 </head>
 <body>
-
-  <!-- Navigation Bar -->
-  <header>
-    <div class="container nav-inner">
-      <div class="logo">AuraVision <span>G1</span></div>
-      <a href="#preorder" class="nav-cta">Pre-Order</a>
+<header>
+  <div class="shell nav">
+    <a class="brand" href="#top" aria-label="WERKBLICK – Startseite"><span class="brandmark">W</span> WERKBLICK</a>
+    <nav class="links" aria-label="Hauptnavigation">
+      <a href="#problem">Herausforderung</a><a href="#prinzip">Ansatz</a><a href="#pilot">Pilot</a><a href="#demo">Demo</a>
+    </nav>
+    <span class="pill">Konzept · Nicht im Verkauf</span>
+  </div>
+</header>
+<main id="top">
+  <div class="hero">
+    <div class="shell hero-grid">
+      <div>
+        <div class="eyebrow">Für den deutschen Mittelstand · Pilot statt Großprojekt</div>
+        <h1>Arbeitsanweisungen <em>im Blick.</em><br>Beide Hände frei.</h1>
+        <p>WERKBLICK ist ein Konzept für einen klar abgegrenzten Smart-Glasses-Piloten in Produktion und Instandhaltung: ein Arbeitsablauf, passende Industrie-Hardware und ein messbarer Vergleich mit heute.</p>
+        <div class="actions"><a class="btn primary" href="#pilot">6-Wochen-Pilot ansehen <span aria-hidden="true">↗</span></a><a class="btn secondary" href="#demo">Beispielablauf testen</a></div>
+        <div class="note">Konzeptstudie · Keine echten Produkt- oder Kundenreferenzen</div>
+      </div>
+      <div class="visual" aria-label="Illustration einer industriellen Smart Glasses und einer Prozess-Checkliste" role="img">
+        <div class="graphic"><svg viewBox="0 0 480 295" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <defs><linearGradient id="lens" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#80c9b0" stop-opacity=".39"/><stop offset="1" stop-color="#3c837b" stop-opacity=".07"/></linearGradient></defs>
+          <path d="M24 114C52 88 106 80 162 100l32 11c34 9 60 9 92-2l22-8c57-17 113-10 147 12" fill="none" stroke="#99e5d1" stroke-width="9" stroke-linecap="round"/>
+          <path d="M37 119C50 102 76 104 140 115c26 5 40 16 36 47-4 29-17 54-48 61-29 7-69-11-77-34-8-22-16-56-14-70Z" fill="url(#lens)" stroke="#e2fff5" stroke-width="9"/>
+          <path d="M299 123c43-18 93-19 143-3 0 21-5 50-15 71-12 26-49 38-80 30-27-8-44-31-48-60-2-15-2-28 0-38Z" fill="url(#lens)" stroke="#e2fff5" stroke-width="9"/>
+          <path d="M180 133c40-13 64-13 114 0" fill="none" stroke="#a1e9d4" stroke-width="11" stroke-linecap="round"/>
+          <path d="M39 122 5 106M442 122l33-17" stroke="#c5fff0" stroke-width="12" stroke-linecap="round"/>
+          <rect x="320" y="108" rx="9" width="41" height="16" fill="#58dcb5"/><circle cx="345" cy="116" r="3" fill="#123b39"/>
+          <path d="M74 159h63M74 174h39M336 162h68" stroke="#a6e9d4" stroke-opacity=".7" stroke-width="5" stroke-linecap="round"/>
+        </svg></div>
+        <div class="screen" aria-hidden="true"><div class="screen-top"><span>Beispiel: Qualitätskontrolle</span><span>02 / 03</span></div><strong>Sichtprüfung des Bauteils bestätigen</strong><div class="progress"><span></span></div><div class="status">✓ Prüfschritt vorbereitet</div></div>
+      </div>
     </div>
-  </header>
-
-  <main>
-    <!-- Hero Section -->
-    <section class="hero">
-      <div class="container">
-        <div class="badge">GDPR Compliant &bull; 100% Camera-Free &bull; German Certified</div>
-        <h1>The Smart Glasses Built for the German Boardroom and Beyond</h1>
-        <p>Experience instant teleprompting, live translation, and subtle heads-up alerts on a featherweight titanium frame. No intrusive cameras, 100% GDPR compliant, and engineered for German professionals.</p>
-        <div class="hero-actions">
-          <a href="#preorder" class="btn-primary">Reserve Your Founder Edition — €549</a>
-          <a href="#features" class="btn-secondary">Explore Corporate Privacy Specs</a>
-        </div>
-      </div>
-    </section>
-
-    <!-- Specs Bar -->
-    <section class="specs-bar">
-      <div class="container specs-grid">
-        <div class="spec-item">
-          <h4>38g</h4>
-          <p>Aerospace Titanium</p>
-        </div>
-        <div class="spec-item">
-          <h4>0 Cameras</h4>
-          <p>100% GDPR Compliant</p>
-        </div>
-        <div class="spec-item">
-          <h4>Micro-LED</h4>
-          <p>Invisible Waveguide HUD</p>
-        </div>
-        <div class="spec-item">
-          <h4>Fielmann / Apollo</h4>
-          <p>Native Prescription Ready</p>
-        </div>
-      </div>
-    </section>
-
-    <!-- Core Features Section -->
-    <section class="features" id="features">
-      <div class="container">
-        <div class="section-header">
-          <h2>Intelligence in Plain Sight. Zero Privacy Compromise.</h2>
-          <p>Engineered to resolve the fundamental friction holding smart eyewear back in Germany.</p>
-        </div>
-
-        <div class="feature-grid">
-          <!-- Card 1 -->
-          <div class="feature-card">
-            <div class="feature-icon">&check;</div>
-            <h3>100% Camera-Free & Works Council Compliant</h3>
-            <p>Unlike conventional smart glasses that record bystanders and trigger office bans, AuraVision G1 features zero optical cameras or audio eavesdropping. Fully compliant with German <em>Betriebsrat</em> workplace regulations and Section 201a privacy requirements. Wear it freely into client boardrooms and production floors.</p>
-          </div>
-
-          <!-- Card 2 -->
-          <div class="feature-card">
-            <div class="feature-icon">&#9678;</div>
-            <h3>Invisible Micro-LED Optical Waveguide Display</h3>
-            <p>Powered by a dual-eye monochrome green waveguide display, your critical notes, teleprompter cues, and turn-by-turn navigation float discreetly at infinite focus. Only you can see the display—it remains entirely invisible to observers sitting directly across the table.</p>
-          </div>
-
-          <!-- Card 3 -->
-          <div class="feature-card">
-            <div class="feature-icon">&harr;</div>
-            <h3>Real-Time Multilingual Translation & Teleprompting</h3>
-            <p>Deliver high-stakes keynote presentations without ever looking down at cue cards. In cross-border negotiations, read live real-time German-to-English or French-to-German text translations floating seamlessly beside your conversation partner.</p>
-          </div>
-
-          <!-- Card 4 -->
-          <div class="feature-card">
-            <div class="feature-icon">&oplus;</div>
-            <h3>Master Optician Prescription & Bauhaus Titanium</h3>
-            <p>Weighing just 38 grams, AuraVision G1 is forged from hypoallergenic aerospace titanium. Designed in the minimalist Bauhaus tradition, it blends indistinguishably into high-end executive eyewear and pairs seamlessly with custom prescription lenses from top German optical partners.</p>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- Comparison Table Section -->
-    <section class="comparison">
-      <div class="container">
-        <div class="section-header">
-          <h2>How AuraVision G1 Compares</h2>
-          <p>Tailored specifically for European regulatory standards and executive workflow.</p>
-        </div>
-        <div class="table-wrapper">
-          <table>
-            <thead>
-              <tr>
-                <th>Feature / Dimension</th>
-                <th>Ray-Ban Meta</th>
-                <th>AR Goggles (XREAL)</th>
-                <th>AuraVision G1</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr class="highlight">
-                <td>German Privacy & Works Council</td>
-                <td>High friction (office bans)</td>
-                <td>Sensors present</td>
-                <td>100% Certified Compliant</td>
-              </tr>
-              <tr>
-                <td>Built-in Camera</td>
-                <td>Yes (12 MP, LED indicator)</td>
-                <td>Tracking sensors</td>
-                <td>None (Camera-Free)</td>
-              </tr>
-              <tr>
-                <td>Weight & Form Factor</td>
-                <td>~50g plastic frame</td>
-                <td>75g–90g bulky visor</td>
-                <td>38g Aerospace Titanium</td>
-              </tr>
-              <tr>
-                <td>Discreet Heads-Up Display</td>
-                <td>None (audio only)</td>
-                <td>Color Birdbath (cable tether)</td>
-                <td>Monochrome Waveguide HUD</td>
-              </tr>
-              <tr>
-                <td>Prescription Optical Integration</td>
-                <td>Third-party ordering</td>
-                <td>Clip-in insert</td>
-                <td>Certified Optician Partners</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
-    </section>
-
-    <!-- Pre-Order CTA Section -->
-    <section class="cta-section" id="preorder">
-      <div class="container cta-box">
-        <h2>Elevate Your Daily Focus with German Engineered Optical AI</h2>
-        <p>Backed by a 30-day corporate trial, German customer support, and full GDPR compliance documentation.</p>
-        <a href="#preorder" class="btn-primary">Pre-Order AuraVision G1 — €549</a>
-      </div>
-    </section>
-  </main>
-
-  <!-- Footer -->
-  <footer>
-    <div class="container footer-inner">
-      <div class="copyright">&copy; 2026 AuraVision Technologies GmbH. All rights reserved.</div>
-      <div class="footer-note">Demo prototype developed for venture team coordination demonstration.</div>
+  </div>
+  <div class="shell"><div class="stats" aria-label="Merkmale des vorgeschlagenen Piloten"><div><strong>1 Prozess</strong><span>klar definierter Anwendungsfall</span></div><div><strong>6 Wochen</strong><span>vorgeschlagener Pilotrahmen</span></div><div><strong>Go / No-Go</strong><span>Entscheidung auf Basis von Daten</span></div></div></div>
+  <section id="problem"><div class="shell split">
+    <div><div class="eyebrow">Die Herausforderung</div><h2 class="section-h">Weniger suchen. Mehr am Prozess arbeiten.</h2><p class="sub">Papier-SOPs, Bildschirmwechsel und uneinheitliche Routinen können Prüfungen erschweren. Ob Smart Glasses wirklich helfen, muss der Betrieb zeigen.</p></div>
+    <div class="panel problem-steps">
+      <article><span class="number">01</span><div><h3>Die Aufgabe verstehen</h3><p>Wo entstehen Suchzeiten, Rückfragen oder Abweichungen im aktuellen Arbeitsablauf?</p></div></article>
+      <article><span class="number">02</span><div><h3>Die Information näher bringen</h3><p>Auf geeigneten Geräten könnten kurze Prüfanweisungen direkt im Sichtfeld angezeigt werden.</p></div></article>
+      <article><span class="number">03</span><div><h3>Den Nutzen sauber nachweisen</h3><p>Zeit, Fehler, Nacharbeit und Bedienbarkeit werden gegen eine dokumentierte Ausgangslage geprüft.</p></div></article>
     </div>
-  </footer>
+  </div></section>
+  <section id="prinzip" style="background:#eaf2ee"><div class="shell">
+    <div class="eyebrow">Unser vorgeschlagener Ansatz</div><h2 class="section-h">Nicht die Brille zuerst.<br>Der Arbeitsablauf zuerst.</h2><p class="sub">Vier Bausteine für einen begrenzten Praxistest — keine unbelegten Leistungsversprechen.</p>
+    <div class="cards">
+      <article class="card"><div class="ico" aria-hidden="true">1</div><h3>Ein Prozess statt Großprojekt</h3><p>Ein wiederkehrender Prüfvorgang. Ein Ausgangswert. Ein klarer Test.</p></article>
+      <article class="card"><div class="ico" aria-hidden="true">2</div><h3>Anweisungen im Blickfeld</h3><p>Kurze Schritte auf geeigneter Industrie-Hardware — vorbehaltlich realem Gerätetest.</p></article>
+      <article class="card"><div class="ico" aria-hidden="true">3</div><h3>Beschäftigte einbeziehen</h3><p>Datenschutz, Arbeitssicherheit, IT und Mitbestimmung werden vor dem Test geprüft.</p></article>
+      <article class="card"><div class="ico" aria-hidden="true">4</div><h3>Ergebnis statt Technikshow</h3><p>Ein Vorher-nachher-Vergleich zeigt, ob der Ansatz wirtschaftlich sinnvoll sein könnte.</p></article>
+    </div>
+  </div></section>
+  <section class="dark" id="pilot"><div class="shell">
+    <div class="eyebrow">Beispiel für einen sechs­wöchigen Piloten</div><h2 class="section-h">Von der Aufgabe zur Entscheidung.</h2><p class="sub">Der Zeitplan ist ein vorgeschlagener Projektablauf, keine bestehende Leistungszusage.</p>
+    <div class="timeline">
+      <article class="tstep"><b>Woche 1</b><h3>Verstehen</h3><p>Ist-Prozess, KPIs und Risiken aufnehmen.</p></article>
+      <article class="tstep"><b>Woche 2</b><h3>Vorbereiten</h3><p>Passende Hardware, IT und Prüfablauf abklären.</p></article>
+      <article class="tstep"><b>Woche 3–4</b><h3>Erproben</h3><p>Mit Beschäftigten kontrolliert testen.</p></article>
+      <article class="tstep"><b>Woche 5</b><h3>Messen</h3><p>Zeiten, Fehler und Feedback vergleichen.</p></article>
+      <article class="tstep"><b>Woche 6</b><h3>Entscheiden</h3><p>Ausrollen, anpassen oder stoppen.</p></article>
+    </div><div class="tags"><span>Nur ein Arbeitsablauf</span><span>Ohne Videoaufzeichnung im Startfall</span><span>Mit sicherem Fallback</span><span>Mit Go-/No-Go-Bericht</span></div>
+  </div></section>
+  <section id="demo"><div class="shell demo-grid">
+    <div><div class="eyebrow">Interaktive Browser-Demo</div><h2 class="section-h">Ein Prüfschritt.<br>Klar geführt.</h2><p class="sub">Klicken Sie durch eine kurze, erfundene Prüfroutine. Das ist keine auf einer Brille laufende Software und keine echte Datenintegration.</p><p class="mini">Es werden keine Daten erfasst, gespeichert oder übertragen.</p></div>
+    <div class="device"><div class="device-label"><span>WERKBLICK · Beispielprozess</span><span>Demo / Offline</span></div><div class="device-screen" aria-live="polite" aria-atomic="true"><span class="chip" id="stepCount">Schritt 1 von 3</span><h3 id="stepTitle">Bauteilnummer prüfen</h3><p id="stepDesc">Vergleichen Sie die Nummer am Musterbauteil mit dem Arbeitsauftrag.</p></div><div class="device-footer"><button type="button" id="backBtn" disabled>← Zurück</button><span id="stepLabel">Testablauf · keine Aufzeichnung</span><button type="button" id="nextBtn">Weiter →</button></div></div>
+  </div></section>
+  <section style="padding-top:16px" id="fragen"><div class="shell"><div class="eyebrow">Was vor einem Piloten geklärt werden muss</div><h2 class="section-h">Vertrauen ist Teil der Einführung.</h2><div class="faq">
+    <article><h3>Kann jemand heimlich filmen?</h3><p>Für den vorgeschlagenen ersten Prüffall ist keine Videoaufzeichnung vorgesehen. Das tatsächliche Geräteverhalten und die rechtliche Zulässigkeit müssen gesondert geprüft werden.</p></article>
+    <article><h3>Wird die Arbeit einzelner Personen überwacht?</h3><p>Das Ziel ist ein Prozessvergleich, kein Mitarbeiterranking. Datenschutz und gegebenenfalls die Beteiligung des Betriebsrats sind vorab zu klären.</p></article>
+    <article><h3>Ist das mit unserem SAP/MES kompatibel?</h3><p>Eine Integration wird nicht zugesichert. Sie hängt von ausgewählter Hardware, Software und Ihrer IT-Umgebung ab.</p></article>
+  </div></div></section>
+  <section class="closing" id="anfrage"><div class="shell"><div class="closing-inner"><div><div class="eyebrow">Nächster Schritt</div><h2>Eine Aufgabe. Ein messbarer Versuch. Eine fundierte Entscheidung.</h2><p>Bereiten Sie eine interne Pilot-Anfrage vor. Es wird nichts versendet — Sie erhalten lediglich eine bearbeitbare Vorlage.</p></div><div class="actioncol"><button type="button" id="requestToggle" class="btn primary" aria-expanded="false" aria-controls="requestBox">Pilot-Anfrage vorbereiten ↓</button><a href="#pilot" class="btn secondary">Pilotplan erneut ansehen</a></div></div><div class="request" id="requestBox" hidden><label for="requestText">Vorlage für eine interne Anfrage</label><textarea id="requestText">Betreff: Smart-Glasses-Pilot für einen konkreten Arbeitsablauf
 
+Wir möchten prüfen, ob ein handsfreier, digital geführter Arbeitsablauf in unserer Produktion / Instandhaltung sinnvoll wäre.
+
+Prozess / Tätigkeit: [bitte ergänzen]
+Aktuelle Probleme: [bitte ergänzen]
+Verantwortlicher Bereich: [bitte ergänzen]
+Wichtige Kennzahlen: [bitte ergänzen]
+IT-/Datenschutz-/Betriebsrat-Abklärung: [bitte ergänzen]
+
+Vorschlag: begrenzter Pilot mit Baseline, sicherem Fallback und dokumentierter Go-/No-Go-Entscheidung.</textarea><br><button type="button" class="btn primary" id="copyBtn">Text kopieren</button><span role="status" id="copyFeedback"></span></div></div></section>
+</main>
+<footer><div class="shell footer-inner"><p><strong>WERKBLICK</strong> · Provisorischer Projektname. Nur eine Markteintritts- und Landing-Page-Konzeptstudie, keine angebotene Dienstleistung. Keine Kunden, Device-Partnerschaften oder Produktverfügbarkeit behauptet. Name markenrechtlich nicht geprüft.</p><p>Deutschland · Konzeptstand November 2026</p></div></footer>
+<script>
+(function(){
+  'use strict';
+  var steps=[
+    {title:'Bauteilnummer prüfen',desc:'Vergleichen Sie die Nummer am Musterbauteil mit dem Arbeitsauftrag.'},
+    {title:'Sichtprüfung durchführen',desc:'Prüfen Sie die Oberfläche des Musterbauteils auf sichtbare Beschädigungen.'},
+    {title:'Prüfergebnis bestätigen',desc:'Markieren Sie die Routine als abgeschlossen oder klären Sie eine Abweichung über das definierte Betriebsverfahren.'}
+  ];
+  var i=0,count=document.getElementById('stepCount'),title=document.getElementById('stepTitle'),desc=document.getElementById('stepDesc'),back=document.getElementById('backBtn'),next=document.getElementById('nextBtn');
+  function render(){count.textContent='Schritt '+(i+1)+' von '+steps.length;title.textContent=steps[i].title;desc.textContent=steps[i].desc;back.disabled=i===0;next.textContent=i===steps.length-1?'Neu starten ↻':'Weiter →';}
+  back.addEventListener('click',function(){if(i>0){i--;render();}});
+  next.addEventListener('click',function(){i=i===steps.length-1?0:i+1;render();});
+  var toggle=document.getElementById('requestToggle'),box=document.getElementById('requestBox');
+  toggle.addEventListener('click',function(){var opening=box.hidden;box.hidden=!opening;toggle.setAttribute('aria-expanded',String(opening));toggle.textContent=opening?'Vorlage schließen ↑':'Pilot-Anfrage vorbereiten ↓';if(opening){box.scrollIntoView({behavior:'smooth',block:'nearest'});}});
+  var copy=document.getElementById('copyBtn'),feedback=document.getElementById('copyFeedback'),textarea=document.getElementById('requestText');
+  copy.addEventListener('click',async function(){try{if(!navigator.clipboard||!navigator.clipboard.writeText){throw new Error('no clipboard')}await navigator.clipboard.writeText(textarea.value);feedback.textContent='Vorlage kopiert.';}catch(e){textarea.focus();textarea.select();feedback.textContent='Bitte markierten Text mit Strg+C kopieren.';}});
+  render();
+})();
+</script>
 </body>
 </html>
